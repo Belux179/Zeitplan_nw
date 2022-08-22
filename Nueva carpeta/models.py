@@ -44,9 +44,8 @@ class Materia(models.Model):
 
 
 class Horario(models.Model):
-    nombre = models.CharField(
-        max_length=50, unique=True, blank=False, null=False)
-    estado = models.BooleanField(default=True)
+    nombre = models.CharField(max_length=50, unique=True, blank=False, null=False)
+    estado = models.CharField(max_length=50, unique=True, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

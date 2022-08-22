@@ -17,7 +17,7 @@ admin.site.register(Aula, AulaAdmin)
 
 admin.site.register(Grado)
 admin.site.register(Profesor)
-admin.site.register(Materia )
+admin.site.register(Materia)
 admin.site.register(Horario)
 admin.site.register(EstadoProfesorHorario)
 admin.site.register(EstadoGradoHorario)
