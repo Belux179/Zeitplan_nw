@@ -1,10 +1,16 @@
 from django.db import models
-
+from django.utils import timezone
 class Grado(models.Model):
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     alias = models.CharField(max_length=50, blank=True, null=True)
-   # created = models.DateTimeField(auto_now_add=True)
+    state = models.BooleanField(default=True)
+    created = models.DateTimeField(default=timezone.now)
+    updated = models.DateTimeField(auto_now=True)
+    class Meta:
+        ordering = ('nombre',)
+    def __str__(self):
+        return self.nombre
 
     def __str__(self):
         return self.nombre
@@ -42,6 +48,17 @@ class Materia(models.Model):
         verbose_name_plural = 'Materias'
         ordering = ['nombre']
 
+class Aula(models.Model):
+    nombre = models.CharField(
+        max_length=50, unique=True, blank=False, null=False)
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = 'Aula'
+        verbose_name_plural = 'Aulas'
+        ordering = ['nombre']
+
 
 class Horario(models.Model):
     nombre = models.CharField(
@@ -57,22 +74,16 @@ class Horario(models.Model):
         verbose_name_plural = 'Plantillas de horario'
         ordering = ['nombre']
 
-
-# Estado_profesor_horario
 class EstadoProfesorHorario(models.Model):
     estado = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT)
 
-    def __str__(self):
-        return self.estado
-
+    
     class Meta:
         verbose_name = 'Estado de profesor en horario'
         verbose_name_plural = 'Estados de profesor en horario'
         ordering = ['estado']
-
-# Estado_grados_horario
 
 
 class EstadoGradoHorario(models.Model):
@@ -81,7 +92,7 @@ class EstadoGradoHorario(models.Model):
     grado = models.ForeignKey(Grado, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.estado
+        return str(self.estado)
 
     class Meta:
         verbose_name = 'Estado de grado en horario'
@@ -97,15 +108,24 @@ class EstadoMateriaHorario(models.Model):
     materia = models.ForeignKey(Materia, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.estado
+        return str(self.estado)
 
     class Meta:
         verbose_name = 'Estado de materia en horario'
         verbose_name_plural = 'Estados de materia en horario'
         ordering = ['estado']
+class EstadoAulaHorario(models.Model):
+    estado = models.BooleanField(default=True)
+    horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
+    aula = models.ForeignKey(Aula, on_delete=models.PROTECT)
 
-# Asignatura
+    def __str__(self):
+        return str(self.estado)
 
+    class Meta:
+        verbose_name = 'Estado de aula en horario'
+        verbose_name_plural = 'Estados de aula en horario'
+        ordering = ['estado']
 
 class Asignatura(models.Model):
     estado = models.BooleanField(default=True)
