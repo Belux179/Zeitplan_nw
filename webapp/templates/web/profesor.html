@@ -1,9 +1,15 @@
-
 {% extends "base/aplicacion.html" %}
 
+{% block title %}HOME{% endblock title %}
+{%block title_body%}<h2>HOME</h2>{%endblock title_body%}
 {%block body%}
-
-<div>
-    <h1>Este es la pagina de profesores</h1>
-</div>
+{% for profesor in profesores %}
+<p>{{profesor}}</p>
+{% endfor %}asd
+<form  method="POST">
+    {{ form }}
+    </br>
+    <input type="submit" value="agregar" />
+</form>
 {%endblock body%}
+

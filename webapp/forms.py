@@ -48,10 +48,6 @@ class ProfesorForm(forms.ModelForm):
             'nombre': 'Nombre',
             'alias': 'Alias',
         }
-        help_texts = {
-            'nombre': 'Nombre del profesor',
-            'alias': 'Alias del profesor',
-        }
         error_messages = {
             'nombre': {
                 'max_length': "Nombre muy largo",
