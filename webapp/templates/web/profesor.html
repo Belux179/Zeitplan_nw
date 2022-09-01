@@ -3,9 +3,9 @@
 {% block title %}HOME{% endblock title %}
 {%block title_body%}<h2>HOME</h2>{%endblock title_body%}
 {%block body%}
-{% for profesor in profesores %}
-<p>{{profesor}}</p>
-{% endfor %}asd
+
+{% load table_tags %}
+{% render_table table_ %}
 <form  method="POST">
     {{ form }}
     </br>

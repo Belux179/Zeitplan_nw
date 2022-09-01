@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-
+from .tables import *
 
 
 #home con validacion de usuario con login_required
@@ -27,7 +27,7 @@ class ProfesoresView(ListView):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class()
         #enviar lista de Profesores
-        context['profesores'] = Profesor.objects.all()
+        context['table_'] = ProfesorTable() 
         return context
 
     @method_decorator(login_required)

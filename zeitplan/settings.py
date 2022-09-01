@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     #-----------------------------------------------------
     'colorfield',
     'crispy_forms',
+    'table'
     
 ]
 
