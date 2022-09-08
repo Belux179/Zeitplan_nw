@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.forms import model_to_dict
+
 class Grado(models.Model):
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
@@ -11,10 +13,8 @@ class Grado(models.Model):
         ordering = ('nombre',)
     def __str__(self):
         return self.nombre
-
-    def __str__(self):
-        return self.nombre
-
+    
+   
     class Meta:
         verbose_name = 'Grado'
         verbose_name_plural = 'Grados'
@@ -28,6 +28,9 @@ class Profesor(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    def toJson(self):
+        return model_to_dict(self)
 
     class Meta:
         verbose_name = 'Profesor'

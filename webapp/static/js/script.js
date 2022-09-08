@@ -8,6 +8,6 @@ $(document).ready(function () {
 $(document).ready(function () {
     $('#btn_ajax').click(function () {
         alert('Hello World');
-
+        
     });
 });

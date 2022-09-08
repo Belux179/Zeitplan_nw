@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-
+from django.http import JsonResponse
 
 
 #home con validacion de usuario con login_required
@@ -26,14 +26,20 @@ class ProfesoresView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class()
-        #enviar lista de Profesores
-        context['profesores'] = Profesor.objects.all()
+        context['Profesores'] = Profesor.objects.all()
         return context
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        
         return super().dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('profesores')
+        return render(request, self.template_name, {'form': form, 'Profesores': Profesor.objects.all()})
 
 class GradosView(ListView):
     model = Grado
