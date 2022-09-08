@@ -1,10 +1,154 @@
 {% extends "base/aplicacion.html" %}
 
-{% block title %}HOME{% endblock title %}
-{%block title_body%}<h2>HOME</h2>{%endblock title_body%}
+{% block title %}Horarios{% endblock title %}
+{%block title_body%}<h2>Horarios</h2>{%endblock title_body%}
 {%block body%}
-
-<!--action button for javascript ajax-->
-<button id="btn_ajax">AJAX</button>
+<!-- datatable de los profesores con los datos id, nombre, alias -->
+<div class="" style="margin-top: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Lista de Horarios</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla_horarios" class="table">
+                    <thead class=" text-primary">
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Estado
+                        </th>
+                        <th>
+                            Descripcion
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for horario in horarios %}
+                        <tr>
+                            <td>
+                                {{horario.id}}
+                            </td>
+                            <td>
+                                {{horario.nombre}}
+                            </td>
+                            <td>
+                                {{horario.estado_del_horario}}
+                            </td>
+                            <td>
+                                {{horario.descripcion}}
+                            </td>
+                            <td>    
+                                <a href="{{horario.id}}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="{{horario.id}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 {%endblock body%}
 
+{% block javascript %}
+<script type="application/javascript">
+    try {
+        $(document).ready(function() {
+            $('#tabla_horarios').DataTable({
+                "processing": true,
+                "responsive": true,
+                "language": {
+                    {% load static %}
+                    "url": "{% static 'json/table_es.json' %}"
+                },
+                ajax: {
+                    url: '{% url 'horarios_ajax' %}',
+                    type: 'POST',
+                    dataSrc: '',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    }
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'nombre'},
+                    {data: 'estado_del_horario'},
+                    {data: 'descripcion'},
+                    {data: 'id'}
+                ],
+                columnDefs: [{
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        return '<a href="' + data + '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+
+                                '<a href="' + data + '" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    }
+                }]
+    
+            });
+        });// */
+        $(document).ready(function() {
+            $('#tabla_grados').DataTable({
+                "processing": true,
+                "responsive": true,
+                "language": {
+                    {% load static %}
+                    "url": "{% static 'json/table_es.json' %}"
+                },
+                ajax: {
+                    url: '{% url 'grados_ajax' %}',
+                    type: 'POST',
+                    dataSrc: '',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    }
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'nombre'},
+                    {data: 'alias'},
+                    {data: 'activo'},
+                    {data: 'id'}
+                ],
+                columnDefs: [{
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        return '<a href="' + data + '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+
+                                '<a href="' + data + '" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    }
+                }]
+    
+            });
+        });// */
+    } catch (error) {
+        console.log(error);
+    }
+    $(document).ready(function() {
+        $.ajax({
+            url: '{% url 'materias_ajax' %}',
+            type: 'POST',
+            dataSrc: '',
+            dataType: 'json',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            }
+        })
+        .done(function(data) {
+            console.log("success");
+            console.log(data);
+        })
+    });
+
+</script>
+{% endblock javascript %}

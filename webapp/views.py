@@ -12,10 +12,16 @@ from django.http import JsonResponse
 #home con validacion de usuario con login_required
 class HomeView(TemplateView):
     template_name = 'web/home.html'
+    model = Horario
+    
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+    def dispatch(self, request, *args, **kwargs):
+        return super(HomeView, self).dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['horarios'] = Horario.objects.all()
+        return context
 
 class ProfesoresView(ListView):
     model = Profesor
@@ -44,10 +50,35 @@ class ProfesoresView(ListView):
 class GradosView(ListView):
     model = Grado
     template_name = 'web/grado.html'
-    context_object_name = 'grados'
+    form_class = GradoForm
+    second_form_class = MateriaForm
+    
+    #usando get_context_data y dispatch para enviar el formulario y validar el usuario
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if 'form_grado' not in context:
+            context['form_grado'] = GradoForm
+        if 'form_materia' not in context:
+            context['form_materia'] = MateriaForm
+        context['Grados'] = Grado.objects.all()
+        context['Materias'] = Materia.objects.all()
+        return context
+
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {'grados': Grado.objects.all()})
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('tipo') == 'grado':
+            form = self.form_class(request.POST)
+            form_grado , form_materia = form, self.second_form_class()
+        if request.POST.get('tipo') == 'materia':
+            form = self.second_form_class(request.POST)
+            form_grado , form_materia = self.form_class(), form
+        if form.is_valid():
+            form.save()
+            return redirect('grados')
+        return render(request, self.template_name, {'form_grado': form_grado, 'form_materia': form_materia, 'Grados': Grado.objects.all(), 'Materias': Materia.objects.all()})
 
 
 class UsuarioView(ListView):
@@ -61,4 +92,4 @@ class ExportarView(ListView):
     template_name = 'web/exportar.html'
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name) #"""

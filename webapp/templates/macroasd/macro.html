@@ -158,3 +158,24 @@
         </nav>
     </div>
 </div>        
+
+<script type="text/javascript">
+    $(function() {
+        $('#boton_test').on('click', function() {
+            $.ajax({
+                url: "{% url 'profesores_ajax' %}",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    'type_query': 'test',
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+            }).done(function(data) {
+                console.log(data);
+                $('#tabla_profesores').DataTable().ajax.reload();
+            }).fail(function() {
+                alert('Error al cargar los datos');
+            });
+        });
+    });
+</script>

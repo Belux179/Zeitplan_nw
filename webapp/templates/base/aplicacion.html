@@ -69,6 +69,12 @@
                 <li {% if request.path == exportar %} class="active" {% endif %}>
                     <a href="{% url 'exportar' %}">Exportar</a>
                 </li>
+                <!-- para ir a la ruta de admin si el usuario es superusuario -->
+                {% if user.is_superuser %}
+                    <li>
+                        <a href="{% url 'admin:index' %}">Pagina de Administiva del sistema</a>
+                    </li>
+                {% endif %}
             </ul>
             <!--
                 <ul class="list-unstyled CTAs">
@@ -109,6 +115,7 @@
         <script src="{% static 'js/script.js' %}"></script>
         <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
         <script src="https://cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {% block javascript %}
     {% endblock javascript %}
     

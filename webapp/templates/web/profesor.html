@@ -23,6 +23,9 @@
                             Alias
                         </th>
                         <th>
+                            Activo
+                        </th>
+                        <th>
                             Acciones
                         </th>
                     </thead>
@@ -39,12 +42,15 @@
                                 {{profesor.alias}}
                             </td>
                             <td>
-                                <a href="{{profesor.id}}" class="btn btn-primary">
-                                    <i class="material-icons">edit</i>
-                                </a>
-                                <a href="{{profesor.id}}" class="btn btn-danger">
-                                    <i class="material-icons">delete</i>
-                                </a>
+                                {% if profesor.activo == True %}
+                                <span class="badge badge-success">Activo</span>
+                                {% else %}
+                                <span class="badge badge-danger">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{profesor.id}}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="{{profesor.id}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -55,49 +61,7 @@
         </div>
     </div>
 </div>
-<div class="table-responsive">
-    <table id="tabla_profesores" class="table tabla_profesores">
-        <thead class=" text-primary">
-            <th>
-                ID
-            </th>
-            <th>
-                Nombre
-            </th>
-            <th>
-                Alias
-            </th>
-            <th>
-                Acciones
-            </th>
-        </thead>
-        <tbody>
-            {% for profesor in Profesores %}
-            <tr>
-                <td>
-                    {{profesor.id}}
-                </td>
-                <td>
-                    {{profesor.nombre}}
-                </td>
-                <td>
-                    {{profesor.alias}}
-                </td>
-                <td>
-                    <a href="{{profesor.id}}" class="btn btn-primary">
-                        <i class="material-icons">edit</i>
-                    </a>
-                    <a href="{{profesor.id}}" class="btn btn-danger">
-                        <i class="material-icons">delete</i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-            
-        </tbody>
-    </table>
-</div>
-<!-- boton para refrescar con ajax -->
+
 <form  method="POST">
     {% csrf_token %}
     {{ form }}
@@ -113,7 +77,7 @@
 <script type="application/javascript">
     try {
         $(document).ready(function() {
-            $('.tabla_profesores').DataTable({
+            $('#tabla_profesores').DataTable({
                 "processing": true,
                 "responsive": true,
                 "language": {
@@ -132,6 +96,7 @@
                     {data: 'id'},
                     {data: 'nombre'},
                     {data: 'alias'},
+                    {data: 'activo'},
                     {data: 'id'}
                 ],
                 columnDefs: [{
@@ -139,35 +104,27 @@
                     class: 'text-center',
                     orderable: false,
                     render: function(data, type, row) {
-                        return '<a href="' + data + '" class="btn btn-primary">' +
-                            '<i class="material-icons">edit</i>' +
-                            '</a>' +
-                            '<a href="' + data + '" class="btn btn-danger">' +
-                            '<i class="material-icons">delete</i>' +
-                            '</a>';
+                        
+                        return '<a href="' + data + '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+ 
+                        '<a href="' + data + '" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+
+                    }
+                }, {
+                    targets: [-2],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        if (data == true) {
+                            return '<span class="badge badge-success">Activo</span>';
+                        } else {
+                            return '<span class="badge badge-danger">Inactivo</span>';
+                        }
                     }
                 }]
     
             });
         });// */
-        $(function() {
-            $('#boton_test').on('click', function() {
-                $.ajax({
-                    url: "{% url 'profesores_ajax' %}",
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        'type_query': 'test',
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'
-                    },
-                }).done(function(data) {
-                    console.log(data);
-                    $('#tabla_profesores').DataTable().ajax.reload();
-                }).fail(function() {
-                    alert('Error al cargar los datos');
-                });
-            });
-        });
+        
     } catch (error) {
         console.log(error);
     }

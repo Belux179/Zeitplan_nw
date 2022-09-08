@@ -45,7 +45,12 @@ class MateriasAjax(ListView):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
+        if 'consulta' in request.POST:
+            consulta = request.POST['consulta']
+            materias = list(Materia.objects.filter(grado=consulta).values())
+            return JsonResponse(materias, safe=False)
         materias = list(Materia.objects.all().values())
+        for materia in materias: materia['grado'] = Grado.objects.get(id=materia['grado_id']).nombre
         return JsonResponse(materias, safe=False)
 
 # Horario
@@ -54,12 +59,14 @@ class HorariosAjax(ListView):
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
-        horarios = list(Horario.objects.all().values())
+        # lista de horarios solo los activos
+        horarios = list(Horario.objects.filter(activo=True).values())
+        
         return JsonResponse(horarios, safe=False)
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        horarios = list(Horario.objects.all().values())
+        horarios = list(Horario.objects.filter(activo=True).values())
         return JsonResponse(horarios, safe=False)
 
 #Asignatura

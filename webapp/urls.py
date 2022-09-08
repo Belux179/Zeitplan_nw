@@ -2,6 +2,7 @@ from django.urls import path
 from .views import *
 from .ajax import *
 
+urlpatterns = []
 
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -20,3 +21,4 @@ urlpatterns += [
     path('asignaturas/ajax/', AsignaturasAjax.as_view(), name='asignaturas_ajax'),
     path('periodos/ajax/', PeriodosAjax.as_view(), name='periodos_ajax'),
 ]
+#"""
