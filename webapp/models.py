@@ -1,134 +1,136 @@
 from django.db import models
 from django.utils import timezone
+from django.forms import model_to_dict
+
 class Grado(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     alias = models.CharField(max_length=50, blank=True, null=True)
-    state = models.BooleanField(default=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    class Meta:
-        ordering = ('nombre',)
+    
     def __str__(self):
         return self.nombre
-
-    def __str__(self):
-        return self.nombre
-
+    
+   
     class Meta:
         verbose_name = 'Grado'
         verbose_name_plural = 'Grados'
-        ordering = ['nombre']
+        ordering = ['activo','nombre',]
 
 
 class Profesor(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     alias = models.CharField(max_length=50, blank=True, null=True)
-
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Profesor'
         verbose_name_plural = 'Profesores'
-        ordering = ['nombre']
+        ordering = ['activo','nombre',]
 
 
 class Materia(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     grado = models.ForeignKey(Grado, on_delete=models.CASCADE)
-
+    state = models.BooleanField(default=True)
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Materia'
         verbose_name_plural = 'Materias'
-        ordering = ['nombre']
+        ordering = ['activo','nombre',]
 
 class Aula(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
+    state = models.BooleanField(default=True)
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Aula'
         verbose_name_plural = 'Aulas'
-        ordering = ['nombre']
+        ordering = ['activo','nombre',]
 
 
 class Horario(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
-    estado = models.BooleanField(default=True)
-    description = models.TextField(blank=True, null=True)
-
+    descripcion = models.TextField(blank=True, null=True)
+    estado_del_horario = models.CharField(
+        max_length=50, blank=True, null=True)
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Plantilla de horario'
         verbose_name_plural = 'Plantillas de horario'
-        ordering = ['nombre']
+        ordering = ['activo','nombre',]
 
 class EstadoProfesorHorario(models.Model):
-    estado = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT)
 
-    
     class Meta:
         verbose_name = 'Estado de profesor en horario'
         verbose_name_plural = 'Estados de profesor en horario'
-        ordering = ['estado']
+        ordering = ['activo',]
 
 
 class EstadoGradoHorario(models.Model):
-    estado = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     grado = models.ForeignKey(Grado, on_delete=models.PROTECT)
 
     def __str__(self):
-        return str(self.estado)
+        return str(self.activo)
 
     class Meta:
         verbose_name = 'Estado de grado en horario'
         verbose_name_plural = 'Estados de grado en horario'
-        ordering = ['estado']
+        ordering = ['activo',]
 
 # Estado_materias_horario
 
 
 class EstadoMateriaHorario(models.Model):
-    estado = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     materia = models.ForeignKey(Materia, on_delete=models.PROTECT)
 
     def __str__(self):
-        return str(self.estado)
+        return str(self.activo)
 
     class Meta:
         verbose_name = 'Estado de materia en horario'
         verbose_name_plural = 'Estados de materia en horario'
-        ordering = ['estado']
+        ordering = ['activo',]
 class EstadoAulaHorario(models.Model):
-    estado = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     aula = models.ForeignKey(Aula, on_delete=models.PROTECT)
 
     def __str__(self):
-        return str(self.estado)
+        return str(self.activo)
 
     class Meta:
         verbose_name = 'Estado de aula en horario'
         verbose_name_plural = 'Estados de aula en horario'
-        ordering = ['estado']
+        ordering = ['activo',]
 
 class Asignatura(models.Model):
-    estado = models.BooleanField(default=True)
+    activo = models.BooleanField(default=True)
     profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT)
     materia = models.ForeignKey(Materia, on_delete=models.PROTECT)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
@@ -136,12 +138,13 @@ class Asignatura(models.Model):
     class Meta:
         verbose_name = 'Asignatura'
         verbose_name_plural = 'Asignaturas'
-        ordering = ['estado']
+        ordering = ['activo',]
 
 # Periodo
 
 
 class Periodo(models.Model):
+    activo = models.BooleanField(default=True)
     nombre = models.CharField(max_length= 50)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
     dia = models.CharField(max_length=10, blank=False, null=False)
