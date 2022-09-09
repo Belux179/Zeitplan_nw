@@ -1,6 +1,31 @@
 from django.db import models
 from django.utils import timezone
 from django.forms import model_to_dict
+from django.contrib.auth.models import User
+
+
+# User 
+
+
+class Pregunta(models.Model):
+    activo = models.BooleanField(default=True)
+    pregunta = models.CharField(max_length=100, unique=True)
+    respuesta = models.CharField(max_length=100)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    fecha_modificacion = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.pregunta
+
+    def toJSON(self):
+        item = model_to_dict(self)
+        return item
+
+    class Meta:
+        db_table = 'pregunta'
+        verbose_name = 'pregunta'
+        verbose_name_plural = 'preguntas'
 
 class Grado(models.Model):
     activo = models.BooleanField(default=True)
