@@ -1,10 +1,26 @@
 {% extends "base/aplicacion.html" %}
 
-{% block title %}HOME{% endblock title %}
-{%block title_body%}<h2>HOME</h2>{%endblock title_body%}
+{% block title %}Configuracion de usuario{% endblock title %}
+{%block title_body%}<h2> {{ user.username|upper }}</h2>{%endblock title_body%}
 {%block body%}
+<form  method="POST">
+    {% csrf_token %}
+    <!-- input hidden para el tipo de post -->
+    <input type="hidden" name="tipo" value="usuario">
+    {{ form }}
+    </br>
+    <input type="submit" value="actualizar" />
+</form>
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="tipo" value="pregunta">
+    {{ form_pregunta }} 
+    </br>
+    <input type="submit" value="actualizar" />
+</form>
 
-<!--action button for javascript ajax-->
-<button id="btn_ajax">AJAX</button>
 {%endblock body%}
 
+{% block javascript %}
+
+{% endblock javascript %}

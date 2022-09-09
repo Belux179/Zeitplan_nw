@@ -2,6 +2,30 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import *
+# user
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django import forms
+
+
+class UserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+
+class PreguntasForm(forms.ModelForm):
+    pregunta = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Pregunta'}))
+    respuesta = forms.CharField(widget=forms.TextInput(
+        attrs={'class': 'form-control', 'placeholder': 'Respuesta'}))
+    usuario = forms.Select(
+        attrs={'class': 'form-control', 'placeholder': 'Usuario'})
+        
+
+    class Meta:
+        model = Pregunta
+        fields = ['pregunta', 'respuesta', 'usuario']
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Usuario', max_length=100)
@@ -9,14 +33,14 @@ class LoginForm(forms.Form):
 
 
 class GradoForm(forms.ModelForm):
-    
+
     class Meta:
         model = Grado
         fields = ['nombre', 'alias']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del grado', 'name': 'nombre_grado_form_grado'}),
             'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias del grado', 'name': 'alias_grado_form_grado'}),
-            
+
         }
         labels = {
             'nombre': 'Nombre del grado',
@@ -33,8 +57,8 @@ class GradoForm(forms.ModelForm):
                 'min_length': 'El alias del grado no puede tener menos de 3 caracteres',
             },
         }
-        #"""
-        
+        # """
+
 
 class ProfesorForm(forms.ModelForm):
     class Meta:
@@ -85,7 +109,7 @@ class MateriaForm(forms.ModelForm):
 class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
-        fields = ['nombre', 'estado_del_horario', 'descripcion'] 
+        fields = ['nombre', 'estado_del_horario', 'descripcion']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'estado_del_horario': forms.TextInput(attrs={'class': 'form-control', 'type': 'hidden'}),
@@ -141,4 +165,4 @@ class AsignaturaForm(forms.ModelForm):
                 'required': 'Horario requerido',
             },
         }
-#"""
+# """

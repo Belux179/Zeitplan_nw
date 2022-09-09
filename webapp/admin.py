@@ -14,6 +14,23 @@ class AulaAdmin(admin.ModelAdmin):
 admin.site.register(Aula, AulaAdmin)
 """
 
+#Preguntas de recuperacion 
+"""
+activo = models.BooleanField(default=True)
+pregunta = models.CharField(max_length=100, unique=True)
+respuesta = models.CharField(max_length=100)
+usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+fecha_creacion = models.DateTimeField(default=timezone.now)
+fecha_modificacion = models.DateTimeField(default=timezone.now)
+"""
+class PreguntaAdmin(admin.ModelAdmin):
+    list_display = ('activo', 'pregunta', 'respuesta', 'usuario')
+    list_filter = ('activo',)
+    search_fields = ('pregunta','usuario')
+    ordering = ('pregunta',)
+    fields = ('pregunta', 'respuesta', 'activo')
+    list_per_page = 5
+
 class GradoAdmin(admin.ModelAdmin):
     list_display = ('activo','nombre', 'alias')
     search_fields = ('activo','nombre','alias')
@@ -98,6 +115,7 @@ class PeriodoAdmin(admin.ModelAdmin):
 
     
 
+admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(Grado, GradoAdmin)
 admin.site.register(Profesor, ProfesorAdmin)
 admin.site.register(Materia, MateriaAdmin)
@@ -107,3 +125,5 @@ admin.site.register(EstadoGradoHorario, EstadoGradoHorarioAdmin)
 admin.site.register(EstadoMateriaHorario, EstadoMateriaHorarioAdmin)
 admin.site.register(Asignatura, AsignaturaAdmin)
 admin.site.register(Periodo, PeriodoAdmin)
+#daf
+
