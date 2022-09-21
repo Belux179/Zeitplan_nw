@@ -11,7 +11,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="tabla_grados" class="table">
+                <table id="tabla_grados" class="table table-bordered table-hover nowrap" style="width:100%">
                     <thead class=" text-primary">
                         <th>
                             ID
@@ -68,7 +68,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="tabla_materias" class="table ">
+                <table id="tabla_materias" class="table table-bordered table-hover nowrap" style="width:100%">
                     <thead class=" text-primary">
                         <th>
                             ID
@@ -212,7 +212,7 @@
                     orderable: false,
                     render: function(data, type, row) {
                         return '<a href="' + data + '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+
-                                '<a href="' + data + '" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                                '<a  class="pru btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                     }
                 },
                 {
@@ -247,6 +247,32 @@
             console.log(data);
         })
     });
+
+    try{
+        $('.pru').click(function(event) {
+            Swal.fire({
+                title: 'Seguro que desea eliminar?',
+                text: "No podras revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, eliminar!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        'Eliminado!',
+                        'El registro ha sido eliminado.',
+                        'success'
+                    )
+                }
+    
+            })
+        });
+        
+    }catch(error){
+        console.log(error);
+    }
 
 </script>
 {% endblock javascript %}

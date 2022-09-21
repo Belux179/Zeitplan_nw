@@ -65,8 +65,8 @@ class ProfesorForm(forms.ModelForm):
         model = Profesor
         fields = ['nombre', 'alias']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_profesor_form_profesor'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias', 'id': 'alias_profesor_form_profesor'}),
         }
         labels = {
             'nombre': 'Nombre',
@@ -81,7 +81,28 @@ class ProfesorForm(forms.ModelForm):
                 'max_length': "Alias muy largo",
             },
         }
-
+class ProfesorFormUpdate(forms.ModelForm):
+    class Meta:
+        model = Profesor
+        fields = ['id','nombre', 'alias']
+        widgets = {
+            'id': forms.HiddenInput(attrs={'class': 'form-control', 'placeholder': 'Id', 'id': 'id_profesor_form_profesor'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_profesor_form_update_profesor'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias', 'id': 'alias_profesor_form_update_profesor'}),
+        }
+        labels = {
+            'nombre': 'Nombre',
+            'alias': 'Alias',
+        }
+        error_messages = {
+            'nombre': {
+                'max_length': "Nombre muy largo",
+                'required': "Nombre requerido",
+            },
+            'alias': {
+                'max_length': "Alias muy largo",
+            },
+        }
 
 class MateriaForm(forms.ModelForm):
     class Meta:
