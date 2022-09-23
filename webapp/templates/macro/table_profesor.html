@@ -1,14 +1,75 @@
-{% extends "base/aplicacion.html" %}
+{% load static %}
+<div class="" style="margin-top: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="card-title">Lista de profesores</h4>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group float-right">
+                        <button onclick="add_profesor()" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+                            <i class="fa fa-plus"></i> Nuevo
+                        </button>
+                        <!-- agregue mas botones -->
+                    </div>
+                </div>
+            </div>             
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla_profesores" class="table tabla_profesores table-bordered table-hover nowrap" style="width:100%">
+                    <thead class=" text-primary">
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Alias
+                        </th>
+                        <th>
+                            Activo
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for profesor in Profesores %}
+                        <tr>
+                            <td>
+                                {{profesor.id}}
+                            </td>
+                            <td>
+                                {{profesor.nombre}}
+                            </td>
+                            <td>
+                                {{profesor.alias}}
+                            </td>
+                            <td>
+                                {% if profesor.activo == True %}
+                                    <span class="badge badge-success">Activo</span> 
+                                    <a onclick="change_status_profesor({{profesor.id}})" class="btn btn-success btn-sm"><i class="fa fa-check" ></i></a>
+                                {% else %}
+                                    <span class="badge badge-danger">Inactivo</span>
+                                    <a onclick="change_status_profesor({{profesor.id}})" class="btn btn-danger btn-sm ml-1"><i class="fa fa-times" ></i></a>                                    
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{profesor.id}}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="{{profesor.id}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-{% block title %}Profesores{% endblock title %}
-{%block title_body%}<h2>Profesores</h2>{%endblock title_body%}
-
-{%block body%}
-    {%include "macro/table_profesor.html" with Profesores=Profesores%}
-{%endblock body%}
-
-{% block javascript %}
-<!--
 <script type="application/javascript">
     table_id = '#tabla_profesores';
     try {
@@ -227,5 +288,3 @@
         })
     }
 </script>
---
-{% endblock javascript %}

@@ -9,7 +9,7 @@ from .forms import *
 
 class ProfesoresAjax(ListView):
     model = Profesor
-
+    form_class = ProfesorForm
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         profesores = list(Profesor.objects.all().values())
@@ -69,9 +69,6 @@ class ProfesoresAjax(ListView):
                     profesor = Profesor.objects.get(id=id)
                     profesor.delete()
                     return JsonResponse({'message': 'Profesor eliminado con exito'}, status=200)
-
-            
-
             profesores = list(Profesor.objects.all().values())
             return JsonResponse(profesores, safe=False)
         except Exception as e:
@@ -81,6 +78,7 @@ class ProfesoresAjax(ListView):
 # grado
 class GradosAjax(ListView):
     model = Grado
+    form_class = GradoForm
 
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
@@ -89,8 +87,59 @@ class GradosAjax(ListView):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        grados = list(Grado.objects.all().values())
-        return JsonResponse(grados, safe=False)
+        try:
+            id = request.POST.get('id', None)
+            type_request = request.POST.get('type', None)
+            if request.is_ajax():
+                if type_request == 'data_grado':
+                    grado = Grado.objects.get(id=id)
+                    data = {
+                        'nombre': grado.nombre,
+                        'alias': grado.alias,
+                        'activo': grado.activo,
+                    }
+                    return JsonResponse(data, status=200)
+                    
+                if type_request == 'add_grado':
+                    form = self.form_class(request.POST)
+                    if form.is_valid():
+                        form.save()
+                        return JsonResponse({'message': 'Grado agregado con exito'}, status=200)
+                    html_form = str(form)
+                    return JsonResponse({'form': html_form}, status=400)
+        
+                if type_request == 'update_grado':
+                    grado = GradoForm(
+                        request.POST, instance=Grado.objects.get(id=id))
+                    if grado.is_valid():
+                        grado.save()
+                        return JsonResponse({'message': 'Grado actualizado con exito'}, status=200)
+                    html_form = str(grado)
+                    return JsonResponse({'form': html_form}, status=400)
+                
+                if type_request == 'form_update_data_grado':
+                    grado = Grado.objects.get(id=id)
+                    form = GradoForm(instance=grado)
+                    html_form = str(form)
+                    return JsonResponse({'form': html_form}, status=200)
+                
+                if type_request == 'change_status':
+                    grado = Grado.objects.get(id=id)
+                    if grado.activo:
+                        grado.activo = False
+                    else:
+                        grado.activo = True
+                    grado.save()
+                    return JsonResponse({'message': 'Grado eliminado con exito'}, status=200)
+
+                if type_request == 'delete':
+                    grado = Grado.objects.get(id=id)
+                    grado.delete()
+                    return JsonResponse({'message': 'Grado eliminado con exito'}, status=200)
+            grados = list(Grado.objects.all().values())
+            return JsonResponse(grados, safe=False)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
 # materia
 
