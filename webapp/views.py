@@ -38,8 +38,7 @@ class ProfesoresView(ListView):
     # usando get_context_data y dispatch para enviar el formulario y validar el usuario
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form_add'] = self.form_class()
-        context['form_update'] = ProfesorFormUpdate()
+        context['form_add_profesor'] = self.form_class()
         context['Profesores'] = Profesor.objects.all()
         return context
 
@@ -75,6 +74,8 @@ class GradosView(ListView):
             context['form_materia'] = MateriaForm
         context['Grados'] = Grado.objects.all()
         context['Materias'] = Materia.objects.all()
+        context['form_add_grado'] = self.form_class()
+        context['form_add_materia'] = self.second_form_class()
         return context
 
     @method_decorator(login_required)

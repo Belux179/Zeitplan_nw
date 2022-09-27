@@ -32,23 +32,24 @@ class PreguntaAdmin(admin.ModelAdmin):
     list_per_page = 5
 
 class GradoAdmin(admin.ModelAdmin):
-    list_display = ('activo','nombre', 'alias')
-    search_fields = ('activo','nombre','alias')
+    list_display = ('activo','nombre', 'alias', 'status_model') 
+    
+    search_fields = ('activo','nombre','alias', 'status_model')
     ordering = ('activo','nombre',)
     list_per_page = 5
 
 class ProfesorAdmin(admin.ModelAdmin):
-    list_display = ('activo','nombre', 'alias')
-    search_fields = ('activo','nombre','alias')
+    list_display = ('activo','nombre', 'alias', 'status_model')
+    search_fields = ('activo','nombre','alias', 'status_model')
     ordering = ('activo','nombre',)
     list_per_page = 5
 
 class MateriaAdmin(admin.ModelAdmin):
-    list_display = ('activo','nombre', 'grado',)
-    list_filter = ('activo','grado',)
-    search_fields = ('activo','nombre',)
+    list_display = ('activo','nombre', 'grado', 'status_model')
+    list_filter = ('activo','grado', 'status_model')
+    search_fields = ('activo','nombre', 'status_model')
     ordering = ('activo','nombre',)
-    fields = ('activo','nombre', 'grado')
+    fields = ('activo','nombre', 'grado', 'status_model')
     list_per_page = 5
 
 

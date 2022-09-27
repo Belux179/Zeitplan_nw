@@ -4,11 +4,11 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-md-6">
-                    <h4 class="card-title">Lista de profesores</h4>
+                    <h4 class="card-title">Lista de Materias</h4>
                 </div>
                 <div class="col-md-6">
                     <div class="btn-group float-right">
-                        <button onclick="add_profesor()" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+                        <button onclick="add_materia()" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalMateria">
                             <i class="fa fa-plus"></i> Nuevo
                         </button>
                         <!-- agregue mas botones -->
@@ -18,7 +18,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="tabla_profesores" class="table tabla_profesores table-bordered table-hover nowrap" style="width:100%">
+                <table id="tabla_materias" class="table table-bordered table-hover nowrap" style="width:100%">
                     <thead class=" text-primary">
                         <th>
                             ID
@@ -27,7 +27,7 @@
                             Nombre
                         </th>
                         <th>
-                            Alias
+                            Grado
                         </th>
                         <th>
                             Activo
@@ -37,7 +37,6 @@
                         </th>
                     </thead>
                     <tbody>
-                        
                     </tbody>
                 </table>
             </div>
