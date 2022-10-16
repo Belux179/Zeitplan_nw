@@ -1,15 +1,14 @@
 from multiprocessing import context
 from re import U
+from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
-from django.template.loader import render_to_string
 from .forms import *
 from .models import *
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.contrib import messages
+
 # user
 from django.contrib.auth.models import User
 from django import forms
@@ -38,7 +37,7 @@ class ProfesoresView(ListView):
     # usando get_context_data y dispatch para enviar el formulario y validar el usuario
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form_add_profesor'] = self.form_class()
+        context['form'] = self.form_class()
         context['Profesores'] = Profesor.objects.all()
         return context
 
@@ -49,15 +48,11 @@ class ProfesoresView(ListView):
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
-        
         if form.is_valid():
             form.save()
-            # returnar aceptado
-            return JsonResponse({'message': 'Profesor agregado con exito'}, status=200)
-        print('-'*50)
-        html_form = str(form)
-        return JsonResponse({'form': html_form}, status=400)
-        
+            return redirect('profesores')
+        return render(request, self.template_name, {'form': form, 'Profesores': Profesor.objects.all()})
+
 
 class GradosView(ListView):
     model = Grado
@@ -74,8 +69,6 @@ class GradosView(ListView):
             context['form_materia'] = MateriaForm
         context['Grados'] = Grado.objects.all()
         context['Materias'] = Materia.objects.all()
-        context['form_add_grado'] = self.form_class()
-        context['form_add_materia'] = self.second_form_class()
         return context
 
     @method_decorator(login_required)

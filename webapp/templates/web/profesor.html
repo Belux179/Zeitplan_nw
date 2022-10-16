@@ -2,13 +2,132 @@
 
 {% block title %}Profesores{% endblock title %}
 {%block title_body%}<h2>Profesores</h2>{%endblock title_body%}
-
 {%block body%}
-    {%include "macro/table_profesor.html" with Profesores=Profesores%}
+<!-- datatable de los profesores con los datos id, nombre, alias -->
+<div class="" style="margin-top: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="card-title">Lista de profesores</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tabla_profesores" class="table tabla_profesores">
+                    <thead class=" text-primary">
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Nombre
+                        </th>
+                        <th>
+                            Alias
+                        </th>
+                        <th>
+                            Activo
+                        </th>
+                        <th>
+                            Acciones
+                        </th>
+                    </thead>
+                    <tbody>
+                        {% for profesor in Profesores %}
+                        <tr>
+                            <td>
+                                {{profesor.id}}
+                            </td>
+                            <td>
+                                {{profesor.nombre}}
+                            </td>
+                            <td>
+                                {{profesor.alias}}
+                            </td>
+                            <td>
+                                {% if profesor.activo == True %}
+                                <span class="badge badge-success">Activo</span>
+                                {% else %}
+                                <span class="badge badge-danger">Inactivo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{profesor.id}}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                                <a href="{{profesor.id}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form  method="POST">
+    {% csrf_token %}
+    {{ form }}
+    </br>
+    <input type="submit" value="agregar" />
+</form>
+<button class="btn btn-primary" id="boton_test">
+    <i class="material-icons">refresh</i>
+</button>
 {%endblock body%}
 
 {% block javascript %}
-    {% with 'profesores grados' as list_tables %}
-        {% include 'macro/scripts_tables.html' with list_tables=list_tables.split %}
-    {% endwith %}
+<script type="application/javascript">
+    try {
+        $(document).ready(function() {
+            $('#tabla_profesores').DataTable({
+                "processing": true,
+                "responsive": true,
+                "language": {
+                    {% load static %}
+                    "url": "{% static 'json/table_es.json' %}"
+                },
+                ajax: {
+                    url: '{% url 'profesores_ajax' %}',
+                    type: 'POST',
+                    dataSrc: '',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    }
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'nombre'},
+                    {data: 'alias'},
+                    {data: 'activo'},
+                    {data: 'id'}
+                ],
+                columnDefs: [{
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        
+                        return '<a href="' + data + '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+ 
+                        '<a href="' + data + '" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+
+                    }
+                }, {
+                    targets: [-2],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function(data, type, row) {
+                        if (data == true) {
+                            return '<span class="badge badge-success">Activo</span>';
+                        } else {
+                            return '<span class="badge badge-danger">Inactivo</span>';
+                        }
+                    }
+                }]
+    
+            });
+        });// */
+        
+    } catch (error) {
+        console.log(error);
+    }
+    
+</script>
 {% endblock javascript %}

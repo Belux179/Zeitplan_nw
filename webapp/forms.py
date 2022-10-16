@@ -21,11 +21,11 @@ class PreguntasForm(forms.ModelForm):
         attrs={'class': 'form-control', 'placeholder': 'Respuesta'}))
     usuario = forms.Select(
         attrs={'class': 'form-control', 'placeholder': 'Usuario'})
+        
 
     class Meta:
         model = Pregunta
         fields = ['pregunta', 'respuesta', 'usuario']
-
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Usuario', max_length=100)
@@ -38,8 +38,8 @@ class GradoForm(forms.ModelForm):
         model = Grado
         fields = ['nombre', 'alias']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del grado', 'id': 'nombre_grado_form_grado'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias del grado', 'id': 'alias_grado_form_grado'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del grado', 'name': 'nombre_grado_form_grado'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias del grado', 'name': 'alias_grado_form_grado'}),
 
         }
         labels = {
@@ -57,15 +57,16 @@ class GradoForm(forms.ModelForm):
                 'min_length': 'El alias del grado no puede tener menos de 3 caracteres',
             },
         }
-        
+        # """
+
 
 class ProfesorForm(forms.ModelForm):
     class Meta:
         model = Profesor
         fields = ['nombre', 'alias']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_profesor_form_profesor'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias', 'id': 'alias_profesor_form_profesor'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias'}),
         }
         labels = {
             'nombre': 'Nombre',
@@ -80,31 +81,6 @@ class ProfesorForm(forms.ModelForm):
                 'max_length': "Alias muy largo",
             },
         }
-
-
-"""class ProfesorFormUpdate(forms.ModelForm):
-    class Meta:
-        model = Profesor
-        fields = ['id','nombre', 'alias']
-        widgets = {
-            'id': forms.HiddenInput(attrs={'class': 'form-control', 'placeholder': 'Id', 'id': 'id_profesor_form_profesor'}),
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_profesor_form_update_profesor'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias', 'id': 'alias_profesor_form_update_profesor'}),
-        }
-        labels = {
-            'nombre': 'Nombre',
-            'alias': 'Alias',
-        }
-        error_messages = {
-            'nombre': {
-                'max_length': "Nombre muy largo",
-                'required': "Nombre requerido",
-            },
-            'alias': {
-                'max_length': "Alias muy largo",
-            },
-        }
-"""
 
 
 class MateriaForm(forms.ModelForm):
@@ -112,8 +88,8 @@ class MateriaForm(forms.ModelForm):
         model = Materia
         fields = ['nombre', 'grado']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_materia_form_materia'}),
-            'grado': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Grado', 'id': 'grado_materia_form_materia'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'grado': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'nombre': 'Nombre',

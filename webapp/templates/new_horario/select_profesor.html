@@ -1,0 +1,33 @@
+{% extends "base/aplicacion.html" %}
+
+{% block title %} Horario Nuevo{% endblock title %}
+{% block title_body %} <h2>Plantilla para el nuevo Horario</h2>{%endblock title_body%}
+{% block body %}
+    {%include "macro/table_nw_horario.html"%}
+{% endblock body %}
+
+{%block javascript%}
+<script type="text/javascript">
+    try {
+        $.ajax({
+            url: "{% url 'horarios_ajax' %}",
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'type': 'nw_plantilla',
+            },
+            success: function(data){
+
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log(jqXHR);
+                console.log(textStatus);
+                console.log(errorThrown);
+            }
+        })
+    } catch (error) {
+        console.log(error);
+    }
+</script>
+{%endblock javascript%}
