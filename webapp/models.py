@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 
 
 # User 
-
-
 class Pregunta(models.Model):
     activo = models.BooleanField(default=True)
     pregunta = models.CharField(max_length=100, unique=True)
