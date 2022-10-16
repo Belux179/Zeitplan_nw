@@ -13,7 +13,6 @@ class Pregunta(models.Model):
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_modificacion = models.DateTimeField(default=timezone.now)
 
-
     def __str__(self):
         return self.pregunta
 
@@ -26,6 +25,7 @@ class Pregunta(models.Model):
         verbose_name = 'pregunta'
         verbose_name_plural = 'preguntas'
 
+
 class Grado(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(
@@ -37,12 +37,11 @@ class Grado(models.Model):
 
     def __str__(self):
         return self.nombre
-    
-   
+
     class Meta:
         verbose_name = 'Grado'
         verbose_name_plural = 'Grados'
-        ordering = ['activo','nombre',]
+        ordering = ['activo', 'nombre', ]
 
 
 class Profesor(models.Model):
@@ -50,15 +49,16 @@ class Profesor(models.Model):
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     alias = models.CharField(max_length=50, blank=True, null=True)
+    profesion = models.CharField(max_length=50, blank=True, null=True)
     status_model = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Profesor'
         verbose_name_plural = 'Profesores'
-        ordering = ['activo','nombre',]
+        ordering = ['activo', 'nombre', ]
 
 
 class Materia(models.Model):
@@ -67,41 +67,41 @@ class Materia(models.Model):
         max_length=50, unique=True, blank=False, null=False)
     grado = models.ForeignKey(Grado, on_delete=models.CASCADE)
     status_model = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Materia'
         verbose_name_plural = 'Materias'
-        ordering = ['activo','nombre',]
+        ordering = ['activo', 'nombre', ]
+
 
 class Aula(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
-    state_model = models.BooleanField(default=True)
+    state = models.BooleanField(default=True)
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Aula'
         verbose_name_plural = 'Aulas'
-        ordering = ['activo','nombre',]
+        ordering = ['activo', 'nombre', ]
 
 
 class Horario(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
+    ciclo = models.CharField(max_length=50, default='')
     descripcion = models.TextField(blank=True, null=True)
     estado_del_horario = models.CharField(
         max_length=50, blank=True, null=True)
-    status_model = models.BooleanField(default=True)
-    hora_inicio = models.TimeField(default='07:00:00')
-    no_periodos = models.IntegerField(default=8)
-    duracion_hora = models.IntegerField(default=0)
-    duracion_minuto = models.IntegerField(default=30)
+    no_page = models.IntegerField(default=1)
+    status_model = models.BooleanField(default=False)
 
     Lunes = models.BooleanField(default=True)
     Martes = models.BooleanField(default=True)
@@ -110,13 +110,19 @@ class Horario(models.Model):
     Viernes = models.BooleanField(default=True)
     Sabado = models.BooleanField(default=False)
     Domingo = models.BooleanField(default=False)
+
+    cantidad_periodo = models.IntegerField(default=7)
+    hora_inicio = models.TimeField(default=timezone.now)
+    duracion_periodo_hour = models.IntegerField(default=1)
+    duracion_periodo_minute = models.IntegerField(default=0)
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         verbose_name = 'Plantilla de horario'
         verbose_name_plural = 'Plantillas de horario'
-        ordering = ['activo','nombre',]
+        ordering = ['activo', 'nombre', ]
 
 class Recesos(models.Model):
     activo = models.BooleanField(default=True)

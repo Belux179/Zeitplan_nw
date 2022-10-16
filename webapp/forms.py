@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from django import forms
 
 
-
 class UserForm(UserCreationForm):
     class Meta:
         model = User
@@ -22,11 +21,11 @@ class PreguntasForm(forms.ModelForm):
         attrs={'class': 'form-control', 'placeholder': 'Respuesta'}))
     usuario = forms.Select(
         attrs={'class': 'form-control', 'placeholder': 'Usuario'})
-        
 
     class Meta:
         model = Pregunta
         fields = ['pregunta', 'respuesta', 'usuario']
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(label='Usuario', max_length=100)
@@ -39,8 +38,8 @@ class GradoForm(forms.ModelForm):
         model = Grado
         fields = ['nombre', 'alias']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del grado', 'name': 'nombre_grado_form_grado'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias del grado', 'name': 'alias_grado_form_grado'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre del grado', 'id': 'nombre_grado_form_grado'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias del grado', 'id': 'alias_grado_form_grado'}),
 
         }
         labels = {
@@ -66,8 +65,8 @@ class ProfesorForm(forms.ModelForm):
         model = Profesor
         fields = ['nombre', 'alias']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre'}),
-            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_profesor_form_profesor'}),
+            'alias': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Alias', 'id': 'alias_profesor_form_profesor'}),
         }
         labels = {
             'nombre': 'Nombre',
@@ -89,8 +88,8 @@ class MateriaForm(forms.ModelForm):
         model = Materia
         fields = ['nombre', 'grado']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'grado': forms.Select(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_materia_form_materia'}),
+            'grado': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Grado', 'id': 'grado_materia_form_materia'}),
         }
         labels = {
             'nombre': 'Nombre',
@@ -106,33 +105,68 @@ class MateriaForm(forms.ModelForm):
             },
         }
 
+class NewHorarioForm(forms.ModelForm):
+    class Meta:
+        model = Horario
+        fields = ['nombre','ciclo']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_horario_form_horario'}),
+            'ciclo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ciclo', 'id': 'ciclo_horario_form_horario'}),
+        }
+        labels = {
+            'nombre': 'Nombre',
+            'ciclo': 'Ciclo',
+        }
+        error_messages = {
+            'nombre': {
+                'max_length': "Nombre muy largo",
+                'required': "Nombre requerido",
+            },
+            'ciclo': {
+                'max_length': "Nombre largo",
+            },
+        }
+
+
+
 
 class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
-        fields = ['nombre', 'estado_del_horario', 'descripcion']
+        fields = ['nombre', 'ciclo' ,'estado_del_horario', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo', 'cantidad_periodo', 'hora_inicio', 'duracion_periodo_hour', 'duracion_periodo_minute']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
-            'estado_del_horario': forms.TextInput(attrs={'class': 'form-control', 'type': 'hidden'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-control'}),
+            'nombre': forms.TextInput(attrs={'class': 'm-1', 'placeholder': 'Nombre', 'id': 'nombre_horario_form_horario'}),
+            'ciclo': forms.TextInput(attrs={'class': 'm-1', 'placeholder': 'Ciclo', 'id': 'ciclo_horario_form_horario'}),
+            'estado_del_horario': forms.TextInput(attrs={'class': 'form-control', 'type': 'hidden', 'id': 'estado_horario_form_horario'}),
+            'Lunes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Lunes')",'id': 'Lunes_horario_form_horario'}),
+            'Martes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Martes')", 'id': 'Martes_horario_form_horario'}),
+            'Miercoles': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Miercoles')", 'id': 'Miercoles_horario_form_horario'}),
+            'Jueves': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Jueves')", 'id': 'Jueves_horario_form_horario'}),
+            'Viernes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Viernes')", 'id': 'Viernes_horario_form_horario'}),
+            'Sabado': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Sabado')", 'id': 'Sabado_horario_form_horario'}),
+            'Domingo': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Domingo')", 'id': 'Domingo_horario_form_horario'}),
+            'cantidad_periodo': forms.NumberInput(attrs={'class': '', 'placeholder': 'Cantidad de periodos', 'style': 'width: 50px', 'id': 'cantidad_periodo_horario_form_horario'}),
+            'hora_inicio': forms.TimeInput(attrs={'class': '', 'style': 'width: 100px', 'placeholder': 'Hora de inicio', 'id': 'hora_inicio_horario_form_horario'}, format='%H:%M'),
+            'duracion_periodo_hour': forms.NumberInput(attrs={'class': 'ml-1', 'style': 'width: 50px', 'placeholder': 'Duracion de periodo', 'id': 'duracion_periodo_horas_form_horario'}),
+            'duracion_periodo_minute': forms.NumberInput(attrs={'class': 'ml-1', 'style': 'width: 50px', 'placeholder': 'Duracion de periodo', 'id': 'duracion_periodo_minutos_form_horario'}),
         }
+
         labels = {
             'nombre': 'Nombre',
-            'descripcion': 'Descripción',
-        }
-        help_texts = {
-            'nombre': 'Ingrese el nombre del horario',
-            'descripcion': 'Ingrese la descripción del horario',
+            'ciclo': 'Ciclo',
+            'cantidad_periodo': 'Cantidad de periodos por dia ',
+            'hora_inicio': 'Hora de inicio',
+            'duracion_periodo_hour': 'Duracion de periodo (horas)',
+            'duracion_periodo_minute': 'Duracion de periodo (minutos)',
         }
         error_messages = {
             'nombre': {
                 'max_length': 'Nombre demasiado largo',
                 'required': 'Nombre requerido',
             },
-            'descripcion': {
-                'max_length': 'Descripción demasiado larga',
-                'required': 'Descripción requerida',
-            },
+            'ciclo':{
+                'max_length': 'Ciclo demasiado largo',
+            }
         }
 
 

@@ -89,7 +89,6 @@
             </div>
         </div>
     </form>
-    {%include "macro/table_nw_horario.html"%}
 {% endblock body %}
 
 {%block javascript%}
@@ -110,7 +109,7 @@
                     'type': 'dias_activos'
                 },
                 success: function(data){
-                    let Lunes_act = data.Lunes;
+                    var Lunes_act = data.Lunes;
                     var Martes_act = data.Martes;
                     var Miercoles_act = data.Miercoles;
                     var Jueves_act = data.Jueves;
@@ -471,9 +470,9 @@
             }
         })
     })
+    
 
-    
-    
+            
 </script>
 {%endblock javascript%}
 
