@@ -76,8 +76,6 @@ class ProfesoresAjax(ListView):
         except Exception as e:
             print(e)
             return JsonResponse({'message': str(e)}, status=400)
-
-
 # grado
 class GradosAjax(ListView):
     model = Grado

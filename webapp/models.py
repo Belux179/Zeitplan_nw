@@ -15,6 +15,7 @@ class Pregunta(models.Model):
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_modificacion = models.DateTimeField(default=timezone.now)
 
+
     def __str__(self):
         return self.pregunta
 
@@ -34,7 +35,8 @@ class Grado(models.Model):
     alias = models.CharField(max_length=50, blank=True, null=True)
     created = models.DateTimeField(default=timezone.now)
     updated = models.DateTimeField(auto_now=True)
-    
+    status_model = models.BooleanField(default=True)
+
     def __str__(self):
         return self.nombre
     
@@ -50,6 +52,8 @@ class Profesor(models.Model):
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     alias = models.CharField(max_length=50, blank=True, null=True)
+    status_model = models.BooleanField(default=True)
+    
     def __str__(self):
         return self.nombre
 
@@ -64,7 +68,8 @@ class Materia(models.Model):
     nombre = models.CharField(
         max_length=50, unique=True, blank=False, null=False)
     grado = models.ForeignKey(Grado, on_delete=models.CASCADE)
-    state = models.BooleanField(default=True)
+    status_model = models.BooleanField(default=True)
+    
     def __str__(self):
         return self.nombre
 
@@ -105,7 +110,7 @@ class Horario(models.Model):
 class EstadoProfesorHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
-    profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT)
+    profesor = models.ForeignKey(Profesor, on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name = 'Estado de profesor en horario'
@@ -116,7 +121,7 @@ class EstadoProfesorHorario(models.Model):
 class EstadoGradoHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
-    grado = models.ForeignKey(Grado, on_delete=models.PROTECT)
+    grado = models.ForeignKey(Grado, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return str(self.activo)
@@ -132,7 +137,7 @@ class EstadoGradoHorario(models.Model):
 class EstadoMateriaHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
-    materia = models.ForeignKey(Materia, on_delete=models.PROTECT)
+    materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return str(self.activo)
@@ -144,7 +149,7 @@ class EstadoMateriaHorario(models.Model):
 class EstadoAulaHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
-    aula = models.ForeignKey(Aula, on_delete=models.PROTECT)
+    aula = models.ForeignKey(Aula, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return str(self.activo)
