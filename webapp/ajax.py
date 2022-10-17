@@ -354,6 +354,13 @@ class HorariosAjax(ListView, GeneradorHorario):
         if request.is_ajax():
             try:
                 type_request = request.POST.get('type', None)
+                
+                if type_request == 'eliminar_horario':
+                    #solo cambia el status_model
+                    horario = Horario.objects.get(id=request.POST.get('id_horario'))
+                    horario.status_model = False
+                    horario.save()
+                    return JsonResponse({'message': 'Horario eliminado con exito'}, status=200)
                 if type_request == 'nw_plantilla':
                     return JsonResponse(self.nw_plantilla(), safe=False)
                 horarios = list(Horario.objects.filter(status_model=True).values())

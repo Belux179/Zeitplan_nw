@@ -25,6 +25,7 @@ urlpatterns += [
 ]
 #"""
 urlpatterns += [
+    path('modif/<int:id_horario>/', Select_page_HorarioView.as_view(), name='modif'),
     path('plantilla/<int:id_horario>/', PlantillaView.as_view(), name='plantilla'),
     path('select_profesor/<int:id_horario>/', SelectProfesorView.as_view(), name='select_profesor'),
     #path('select_grado/<int:id_horario>/', SelectGradoView.as_view(), name='select_grado'),

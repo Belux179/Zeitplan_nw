@@ -17,7 +17,6 @@ def GeneradorConteo(cont: int = 0):
 class AllHorarioView:
 
     def select_posicion(self, now_posicion, posicion, id_horario):
-        print("ENTROOOOOOO")
         if posicion == 1 and now_posicion != 1:
             return redirect('plantilla', id_horario=id_horario)
         if posicion == 2 and now_posicion != 2:
