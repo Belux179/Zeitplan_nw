@@ -25,7 +25,10 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['horarios'] = Horario.objects.all()
+        context = {
+            'horarios': Horario.objects.all(),
+            'form_nwhorario': NewHorarioForm(),
+        }
         return context
 
 
@@ -37,8 +40,11 @@ class ProfesoresView(ListView):
     # usando get_context_data y dispatch para enviar el formulario y validar el usuario
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = self.form_class()
-        context['Profesores'] = Profesor.objects.all()
+        context = {
+            'form': ProfesorForm(),
+            'Profesores': Profesor.objects.all(),
+            'form_nwhorario': NewHorarioForm(),
+        }
         return context
 
     @method_decorator(login_required)
@@ -63,12 +69,15 @@ class GradosView(ListView):
     # usando get_context_data y dispatch para enviar el formulario y validar el usuario
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context = {
+            'Grados': Grado.objects.all(),
+            'form_nwhorario': NewHorarioForm(),
+            'Materias': Materia.objects.all(),
+        }
         if 'form_grado' not in context:
             context['form_grado'] = GradoForm
         if 'form_materia' not in context:
             context['form_materia'] = MateriaForm
-        context['Grados'] = Grado.objects.all()
-        context['Materias'] = Materia.objects.all()
         return context
 
     @method_decorator(login_required)
@@ -100,13 +109,11 @@ class UsuarioView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # actualizar el usuario que se esta logueando
-        context['form'] = self.form_class(instance=self.request.user)
-        # form de preguntas de recuperacion del usuario que se esta logueando
-        # preguntas que el usuario sea el usuario que se esta logueando
-        
-        context['form_pregunta'] = self.second_form_class(instance=self.request.user)
-        
+        context = {
+            'form': self.form_class(instance=self.request.user),
+            'form_pregunta': self.second_form_class(instance=self.request.user),
+            'form_nwhorario': NewHorarioForm(),
+        }
         return context
         
     def post(self, request, *args, **kwargs):
