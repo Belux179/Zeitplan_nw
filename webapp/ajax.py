@@ -297,6 +297,10 @@ class PlantillaAjax(ListView, GeneradorHorario):
                         receso.horario = Horario.objects.get(id=id_horario)
                         receso.save()
                         return JsonResponse({'message': 'Receso agregado con exito'}, status=200)
+                if type == 'eliminar_receso':
+                    receso = Recesos.objects.get(periodo=int(request.POST.get('periodo'))-1, horario=id_horario)
+                    receso.delete()
+                    return JsonResponse({'message': 'Receso eliminado con exito'}, status=200)
                 horarioModel = Horario.objects.get(id=id_horario)
                 if type == 'hora_inicio':
                     hora_previa = horarioModel.hora_inicio

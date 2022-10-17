@@ -460,7 +460,7 @@
         var minuto = $('#receso_minutos').val();
         var receso = $('#receso').val();
         //no tiene que estar vacio
-        if (receso == '' && hora == '' && minuto == '') {
+        if (receso == '' || hora == '' || minuto == '') {
             Swal.fire({
                 icon: 'error',
                 title: 'No puedes dejar los campos del receso vacios',
@@ -517,6 +517,31 @@
             }
         })
     })
+    // funcion para eliminar receso
+    function eliminar_receso(receso) {
+        $.ajax({
+            url: "{% url 'plantilla_ajax' %}",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                periodo: receso,
+                id_horario: {{ id_horario }},
+                type: 'eliminar_receso',
+            },
+            success: function (data) {
+                table_hor.destroy();
+                table_nw_horarios();
+            },
+            error: function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: error.responseJSON.message,
+                    footer: 'Intenta de nuevo'
+                })
+            }
+        })
+    }
     
 
             
