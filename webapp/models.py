@@ -119,6 +119,15 @@ class Horario(models.Model):
     def __str__(self):
         return self.nombre
 
+    def Dias_list(self):
+        return [self.Lunes, self.Martes, self.Miercoles, self.Jueves, self.Viernes, self.Sabado, self.Domingo]
+
+    def Duracion_str(self):
+        return '{}:{}'.format(self.duracion_periodo_hour, self.duracion_periodo_minute)
+    
+    def Dias_dict(self):
+        return {'Lunes': self.Lunes, 'Martes': self.Martes, 'Miercoles': self.Miercoles, 'Jueves': self.Jueves, 'Viernes': self.Viernes, 'Sabado': self.Sabado, 'Domingo': self.Domingo}
+    
     class Meta:
         verbose_name = 'Plantilla de horario'
         verbose_name_plural = 'Plantillas de horario'
