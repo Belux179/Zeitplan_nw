@@ -11,6 +11,33 @@ from .forms import *
 from .functionHorario import *
 
 
+class UsuarioAjax(ListView):
+    form = PreguntasForm
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            type = request.POST.get('type')
+            usuario = request.user.id
+            pregunta = request.POST.get('pregunta')
+            respuesta = request.POST.get('respuesta')
+            if type == 'frase':
+                if pregunta != '' and respuesta != '':
+                    try:
+                        modelo = Pregunta.objects.get(usuario=usuario)
+                        modelo.pregunta = pregunta
+                        modelo.respuesta = respuesta
+                        modelo.usuario = User.objects.get(id=usuario)
+                        modelo.save()
+                        return JsonResponse({'status': 'ok'})
+                    except Exception as e:
+                        return JsonResponse({'status': 'error'})
+            return JsonResponse({'status': 'ok'}, status=200) 
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+                
+
+
+
 class ProfesoresAjax(ListView):
     model = Profesor
     form_class = ProfesorForm

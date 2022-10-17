@@ -109,24 +109,29 @@ class UsuarioView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        try:
+            form_pregunta = PreguntasForm(instance=Pregunta.objects.get(usuario=self.request.user))
+        except ObjectDoesNotExist:
+            form_pregunta = PreguntasForm()
         context = {
-            'form': self.form_class(instance=self.request.user),
-            'form_pregunta': self.second_form_class(instance=self.request.user),
+            'form_usuario': self.form_class(instance=self.request.user),
+            'form_pregunta': form_pregunta,
             'form_nwhorario': NewHorarioForm(),
+            'id_user': self.request.user.id,
         }
         return context
         
     def post(self, request, *args, **kwargs):
         if request.POST.get('tipo') == 'usuario':
-            form = self.form_class(request.POST, instance=self.request.user)
-            form_usuario, form_pregunta = form, self.second_form_class(
-                instance=self.request.user)
-        if request.POST.get('tipo') == 'pregunta':
-            form = self.second_form_class(request.POST, instance=self.request.user)
-            form_usuario, form_pregunta = form, self.second_form_class(
-                request.POST, instance=self.request.user)
-        if form.is_valid():
-            form.save()
+            # validar que el password1 y password2 sean iguales
+            if request.POST.get('password1') != request.POST.get('password2'):
+                raise ValidationError('Las contraseñas no coinciden')
+            user = User.objects.get(id=request.user.id)
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            #encriptar la contraseña y guardar la
+            user.set_password(request.POST.get('password1'))
+            user.save()
             return redirect('usuario')
         return render(request, self.template_name, {'form': form_usuario, 'form_pregunta': form_pregunta})
 

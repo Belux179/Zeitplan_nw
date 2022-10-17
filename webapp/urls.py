@@ -20,6 +20,7 @@ urlpatterns += [
     path('horarios/ajax/', HorariosAjax.as_view(), name='horarios_ajax'),
     path('asignaturas/ajax/', AsignaturasAjax.as_view(), name='asignaturas_ajax'),
     path('periodos/ajax/', PeriodosAjax.as_view(), name='periodos_ajax'),
+    path('usuario/ajax/', UsuarioAjax.as_view(), name='usuario_ajax'),
     path('newhorario/ajax/', NewHorarioAjax.as_view(), name='newhorario_ajax'),
 ]
 #"""

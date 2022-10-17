@@ -11,20 +11,18 @@ from django import forms
 class UserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['id','username', 'email', 'password1', 'password2']
+
 
 
 class PreguntasForm(forms.ModelForm):
     pregunta = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Pregunta'}))
+        attrs={'class': 'form-control', 'placeholder': 'Pregunta', 'id': 'id_pregunta'}))
     respuesta = forms.CharField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Respuesta'}))
-    usuario = forms.Select(
-        attrs={'class': 'form-control', 'placeholder': 'Usuario'})
-
+        attrs={'class': 'form-control', 'placeholder': 'Respuesta', 'id': 'id_respuesta'}))
     class Meta:
         model = Pregunta
-        fields = ['pregunta', 'respuesta', 'usuario']
+        fields = ['pregunta', 'respuesta']
 
 
 class LoginForm(forms.Form):
@@ -85,7 +83,8 @@ class ProfesorForm(forms.ModelForm):
 
 class MateriaForm(forms.ModelForm):
     class Meta:
-        model = Materia
+        model = Materia 
+        # para grado que solo sean los que tiene status_model = True
         fields = ['nombre', 'grado']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre', 'id': 'nombre_materia_form_materia'}),
@@ -104,6 +103,12 @@ class MateriaForm(forms.ModelForm):
                 'required': "Grado requerido",
             },
         }
+    # hacer que grado sean solo status_model = True
+    def __init__(self, *args, **kwargs):
+        super(MateriaForm, self).__init__(*args, **kwargs)
+        self.fields['grado'].queryset = Grado.objects.filter(status_model=True).order_by('nombre')
+
+
 
 class NewHorarioForm(forms.ModelForm):
     class Meta:
