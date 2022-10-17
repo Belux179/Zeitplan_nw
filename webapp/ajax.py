@@ -286,8 +286,17 @@ class PlantillaAjax(ListView, GeneradorHorario):
                     self.change_checkbox(dia, id_horario)
                     return JsonResponse({'message': 'Dias actualizados con exito'}, status=200)
                 if type == 'agregar_receso':
-                    pass
-
+                    try:
+                        receso = Recesos.objects.get(periodo=request.POST.get('periodo'))
+                    except Recesos.DoesNotExist:
+                        receso = Recesos()
+                    finally:
+                        receso.periodo = request.POST.get('periodo')
+                        receso.hora_duracion = request.POST.get('hora')
+                        receso.minuto_duracion = request.POST.get('minuto')
+                        receso.horario = Horario.objects.get(id=id_horario)
+                        receso.save()
+                        return JsonResponse({'message': 'Receso agregado con exito'}, status=200)
                 horarioModel = Horario.objects.get(id=id_horario)
                 if type == 'hora_inicio':
                     hora_previa = horarioModel.hora_inicio
@@ -304,15 +313,16 @@ class PlantillaAjax(ListView, GeneradorHorario):
                     horarioModel.duracion_periodo_minute = request.POST.get('minuto')
                     horarioModel.save()
                     return JsonResponse({'message': 'Duracion de periodos actualizada con exito'}, status=200)
-                horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(), 
-                    hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
                 if type == 'dias_activos':
                     return JsonResponse(horarioModel.Dias_dict(), safe=False, status=200)
+                recesos = self.recesos_dict(id_horario)
+                horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(), 
+                    recreos=recesos, hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
                 if type == 'generador':
                     horario = self.horario_JSON(horario)
                     return JsonResponse(horario, status=200, safe=False)
-                else:
-                    return JsonResponse({'message': 'error'}, status=400)
+                
+                return JsonResponse({'message': 'error'}, status=400)
         except ValidationError as e:
             if type == 'hora_inicio':
                 return JsonResponse({

@@ -141,7 +141,16 @@ class Recesos(models.Model):
     minuto_duracion = models.IntegerField(default=30)
     status_model = models.BooleanField(default=True)
     def Duracion_str(self):
-        return '{}:{}'.format(self.hora_duracion, self.minuto_duracion)
+        """verifica que sea 00:00"""
+        if self.hora_duracion < 10:
+            hora = '0{}'.format(self.hora_duracion)
+        else:
+            hora = self.hora_duracion
+        if self.minuto_duracion < 10:
+            minuto = '0{}'.format(self.minuto_duracion)
+        else:
+            minuto = self.minuto_duracion
+        return '{}:{}'.format(hora, minuto)
     class Meta:
         verbose_name = 'Receso'
         verbose_name_plural = 'Recesos'

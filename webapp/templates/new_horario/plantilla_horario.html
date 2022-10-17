@@ -62,11 +62,11 @@
             <label for="recesos">Recesos</label>
             <div class="row">
                 <div class="col">
-                    <label for="receso">Antes del periodo</label>
+                    <label for="receso">Despues del periodo</label>
                     <input type="number" class="form-control" id="receso" placeholder="Periodo">
                 </div>
                 <div class="col">
-                    <label for="hora">Hora de duracion</label>
+                    <label for="hora">Horas de duracion</label>
                     <input type="number" class="form-control" id="receso_horas" placeholder="Hora">
                 </div>
                 <div class="col">
@@ -93,7 +93,15 @@
 
 {%block javascript%}
 <script type="text/javascript">
-    // funcion asyncronica 
+    
+    function receso_button(element){
+        //revisar si el principio de element comienza con Receso 
+        if(element.startsWith("Receso")){
+            var num = element.split(" ")[1];
+            return '<button type="button" class="btn btn-danger" onclick="eliminar_receso('+num+')">Eliminar</button>';
+        };
+        return '';
+    };
     var table_hor;
     function table_nw_horarios() {
         try {
@@ -164,6 +172,8 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if(row.Lunes != ''){
+                                        
+                                        return receso_button(row.Lunes);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="'+data+'" data-dia="Lunes" data-hora="'+row.hora+'" data-accion="nuevo">Nuevo</button>';
                                     }else{
                                         return '';
@@ -181,6 +191,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Martes != '') {
+                                        return receso_button(row.Martes);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Martes" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -198,6 +209,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Miercoles != '') {
+                                        return receso_button(row.Miercoles);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Miercoles" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -215,6 +227,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Jueves != '') {
+                                        return receso_button(row.Jueves);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Jueves" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -232,6 +245,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Viernes != '') {
+                                        return receso_button(row.Viernes);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Viernes" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -249,6 +263,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Sabado != '') {
+                                        return receso_button(row.Sabado);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Sabado" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -266,6 +281,7 @@
                                 class: 'text-center',
                                 render: function (data, type, row) {
                                     if (row.Domingo != '') {
+                                        return receso_button(row.Domingo);
                                         return '<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal_nw_horario" data-id="' + data + '" data-dia="Domingo" data-hora="' + row.hora + '" data-accion="nuevo">Nuevo</button>';
                                     } else {
                                         return '';
@@ -381,9 +397,15 @@
         })
     }
     $('#duracion_periodo_horas_form_horario').on('change', function () {
+        if ($(this).val() < 0) {
+            $(this).val(0);
+        };
         change_duracion();
     })
     $('#duracion_periodo_minutos_form_horario').on('change', function () {
+        if ($(this).val() < 0) {
+            $(this).val(0);
+        };
         change_duracion();
     })
     //funcion para enviar cambio de hora de inicio
@@ -438,8 +460,33 @@
         var minuto = $('#receso_minutos').val();
         var receso = $('#receso').val();
         //no tiene que estar vacio
-        if (receso == '') {
-            
+        if (receso == '' && hora == '' && minuto == '') {
+            Swal.fire({
+                icon: 'error',
+                title: 'No puedes dejar los campos del receso vacios',
+                footer: 'Intenta de nuevo',
+                timer: 3000,
+            })
+            return false;
+        }
+        //no puede ser mayor a 8 horas
+        if (hora > 8) {
+            $('#receso_horas').val(8);
+            hora = 8;
+        }
+        //no puede ser mayor a 59 minutos
+        if (minuto > 59) {
+            $('#receso_minutos').val(59);
+            minuto = 59;
+        }
+        //no puede ser menor a 0
+        if (hora < 0) {
+            $('#receso_horas').val(0);
+            hora = 0;
+        }
+        if (minuto < 0) {
+            $('#receso_minutos').val(0);
+            minuto = 0;
         }
         $.ajax({
             url: "{% url 'plantilla_ajax' %}",
@@ -449,7 +496,7 @@
                 'csrfmiddlewaretoken': '{{ csrf_token }}',
                 hora: hora,
                 minuto: minuto,
-                receso: receso,
+                periodo: receso,
                 id_horario: {{ id_horario }}, 
                 type: 'agregar_receso',
             },

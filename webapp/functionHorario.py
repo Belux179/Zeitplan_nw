@@ -31,6 +31,17 @@ class AllHorarioView:
 
 
 class GeneradorHorario:
+    def recesos_dict(self, id_horario: int):
+        """
+        dict: {no_periodo: duración del recreo, no_periodo: duración del recreo, no_periodo: duración del recreo, ...}
+        """
+        recesos = {}
+        try:
+            for rec in Recesos.objects.filter(horario=id_horario):
+                recesos[int(rec.periodo)] = rec.Duracion_str()
+            return recesos
+        except Recesos.DoesNotExist:
+            return None
     def periodos_generador(self, hora_inicio: str = '7:00', intervalo: str = '0:30', decanso: str = '00:00', no_periodos: int = 8, recreos: dict = None) -> list:
         """
         recreos: {no_periodo: duración del recreo}
@@ -166,7 +177,7 @@ class GeneradorHorario:
             return True
         except Horario.DoesNotExist:
             return False
-            
+    
 
 if __name__ == '__main__':
     #prueba = GeneradorHorario()
