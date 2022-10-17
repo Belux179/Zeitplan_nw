@@ -58,8 +58,10 @@ class HorarioAdmin(admin.ModelAdmin):
     list_display = ('activo','nombre', 'descripcion','estado_del_horario')
     list_filter = ('activo','estado_del_horario',)
     search_fields = ('nombre','estado_del_horario',)
-    ordering = ('nombre',)
-    fields = ('activo','nombre', 'descripcion', 'estado_del_horario')
+    ordering = ('nombre','status_model',)
+    fields = (
+        'activo','nombre', 'ciclo','estado_del_horario',
+        'no_page','status_model',)
     list_per_page = 5
 
 class EstadoProfesorHorarioAdmin(admin.ModelAdmin):

@@ -21,6 +21,8 @@ class HomeView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
+        # borrar todo horario que tenga status_model = False y no_page = 1
+        Horario.objects.filter(status_model=False, no_page=1).delete()
         return super(HomeView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -135,6 +137,37 @@ class UsuarioView(ListView):
             return redirect('usuario')
         return render(request, self.template_name, {'form': form_usuario, 'form_pregunta': form_pregunta})
 
+
+class PlantillaView(ListView):
+    model = Horario
+    template_name = 'new_horario/plantilla_horario.html'
+    form_class = HorarioForm
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.id_horario = kwargs['id_horario']
+            self.horario = Horario.objects.get(id=self.id_horario)
+            
+            return super().dispatch(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context = {
+            'id_horario': self.id_horario,
+            'form': HorarioForm(instance=self.horario),
+            'estado_del_horario': self.horario.no_page,
+        }
+        return context
+
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        return render(request, self.template_name, {'form': form})
 
 class ExportarView(ListView):
     template_name = 'web/exportar.html'

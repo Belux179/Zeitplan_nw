@@ -25,7 +25,7 @@ urlpatterns += [
 ]
 #"""
 urlpatterns += [
-    #path('plantilla/<int:id_horario>/', PlantillaView.as_view(), name='plantilla'),
+    path('plantilla/<int:id_horario>/', PlantillaView.as_view(), name='plantilla'),
     #path('select_profesor/<int:id_horario>/', SelectProfesorView.as_view(), name='select_profesor'),
     #path('select_grado/<int:id_horario>/', SelectGradoView.as_view(), name='select_grado'),
     #path('select_asignatura/<int:id_horario>/', AsignaturasView.as_view(), name='asignaturas'),
@@ -33,4 +33,9 @@ urlpatterns += [
     #path('horario/<int:id_horario>/', HorarioView.as_view(), name='horario'),
     
     #path('horario/<int:id_horario>/pdf/', HorarioPDFView.as_view(), name='horario_pdf')
+]
+
+# ajax new_horario
+urlpatterns += [
+    path('plantilla/ajax/', PlantillaAjax.as_view(), name='plantilla_ajax'),
 ]
