@@ -217,6 +217,7 @@ class SelectProfesorView(ListView):
         context = super().get_context_data(**kwargs)
         context = {
             'id_horario': self.id_horario,
+            'form_add_profesor': ProfesorForm(),
             'estado_del_horario': self.estado_del_horario,
         }
         return context

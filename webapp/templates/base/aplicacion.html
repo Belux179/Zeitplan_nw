@@ -56,8 +56,8 @@
                         <a href="/plantilla/{{id_horario}}">Plantilla</a>
                     </li>{% url "select_profesor" as select_profesor %}
                     {% else %}
-                    <li {% if request.path|slice:"1:10" == 'plantilla' %} class="active" {% endif %}>
-                        <a href="{% url 'plantilla' %}">Plantilla</a>
+                    <li class="active">
+                        <a href="/plantilla/{{id_horario}}">Plantilla</a>
                     </li>{% url "select_profesor" as select_profesor %}
                     {% endif %}
                     {% if estado_del_horario > 1 %}

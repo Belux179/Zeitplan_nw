@@ -39,4 +39,5 @@ urlpatterns += [
 # ajax new_horario
 urlpatterns += [
     path('plantilla/ajax/', PlantillaAjax.as_view(), name='plantilla_ajax'),
+    path('select_profesor/ajax/', SelectProfesorAjax.as_view(), name='select_profesores_ajax'),
 ]

@@ -1,3 +1,4 @@
+import sys
 from django.http import JsonResponse
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
@@ -13,6 +14,7 @@ from .functionHorario import *
 
 class UsuarioAjax(ListView):
     form = PreguntasForm
+
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         try:
@@ -31,11 +33,9 @@ class UsuarioAjax(ListView):
                         return JsonResponse({'status': 'ok'})
                     except Exception as e:
                         return JsonResponse({'status': 'error'})
-            return JsonResponse({'status': 'ok'}, status=200) 
+            return JsonResponse({'status': 'ok'}, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
-                
-
 
 
 class ProfesoresAjax(ListView):
@@ -98,7 +98,8 @@ class ProfesoresAjax(ListView):
 
                 if type_request == 'delete':
                     profesor = Profesor.objects.get(id=id)
-                    # cambiar el estado del modelo
+                    nombre = profesor.nombre
+                    profesor.nombre = str(nombre) + ' (Eliminado)'
                     profesor.status_model = False
                     profesor.save()
                     return JsonResponse({'message': 'Profesor eliminado con exito'}, status=200)
@@ -272,7 +273,7 @@ class NewHorarioAjax(ListView):
             html_form = str(form)
             return JsonResponse({'form_html': html_form}, status=400)
 
-import sys
+
 class PlantillaAjax(ListView, GeneradorHorario):
 
     @method_decorator(login_required)
@@ -287,7 +288,8 @@ class PlantillaAjax(ListView, GeneradorHorario):
                     return JsonResponse({'message': 'Dias actualizados con exito'}, status=200)
                 if type == 'agregar_receso':
                     try:
-                        receso = Recesos.objects.get(periodo=request.POST.get('periodo'))
+                        receso = Recesos.objects.get(
+                            periodo=request.POST.get('periodo'))
                     except Recesos.DoesNotExist:
                         receso = Recesos()
                     finally:
@@ -298,7 +300,8 @@ class PlantillaAjax(ListView, GeneradorHorario):
                         receso.save()
                         return JsonResponse({'message': 'Receso agregado con exito'}, status=200)
                 if type == 'eliminar_receso':
-                    receso = Recesos.objects.get(periodo=int(request.POST.get('periodo'))-1, horario=id_horario)
+                    receso = Recesos.objects.get(periodo=int(
+                        request.POST.get('periodo'))-1, horario=id_horario)
                     receso.delete()
                     return JsonResponse({'message': 'Receso eliminado con exito'}, status=200)
                 horarioModel = Horario.objects.get(id=id_horario)
@@ -309,30 +312,33 @@ class PlantillaAjax(ListView, GeneradorHorario):
                     horarioModel.save()
                     return JsonResponse({'message': 'Hora de inicio actualizada con exito'}, status=200)
                 if type == 'no_periodos':
-                    horarioModel.cantidad_periodo = request.POST.get('no_periodos')
+                    horarioModel.cantidad_periodo = request.POST.get(
+                        'no_periodos')
                     horarioModel.save()
                     return JsonResponse({'message': 'Numero de periodos actualizado con exito'}, status=200)
                 if type == 'duracion_periodo':
-                    horarioModel.duracion_periodo_hour = request.POST.get('hora')
-                    horarioModel.duracion_periodo_minute = request.POST.get('minuto')
+                    horarioModel.duracion_periodo_hour = request.POST.get(
+                        'hora')
+                    horarioModel.duracion_periodo_minute = request.POST.get(
+                        'minuto')
                     horarioModel.save()
                     return JsonResponse({'message': 'Duracion de periodos actualizada con exito'}, status=200)
                 if type == 'dias_activos':
                     return JsonResponse(horarioModel.Dias_dict(), safe=False, status=200)
                 recesos = self.recesos_dict(id_horario)
-                horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(), 
-                    recreos=recesos, hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
+                horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(),
+                                                    recreos=recesos, hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
                 if type == 'generador':
                     horario = self.horario_JSON(horario)
                     return JsonResponse(horario, status=200, safe=False)
-                
+
                 return JsonResponse({'message': 'error'}, status=400)
         except ValidationError as e:
             if type == 'hora_inicio':
                 return JsonResponse({
                     'message': 'La hora de inicio debe tener un formato 00:00',
                     'hora': str(hora_previa)[:5],
-                    }, status=400)
+                }, status=400)
             return JsonResponse({'message': str(e)}, status=400)
         except Exception as e:
             print('Error: ', sys.exc_info()[0])
@@ -354,32 +360,60 @@ class HorariosAjax(ListView, GeneradorHorario):
         if request.is_ajax():
             try:
                 type_request = request.POST.get('type', None)
-                
+
                 if type_request == 'eliminar_horario':
-                    #solo cambia el status_model
-                    horario = Horario.objects.get(id=request.POST.get('id_horario'))
+                    # solo cambia el status_model
+                    horario = Horario.objects.get(
+                        id=request.POST.get('id_horario'))
                     horario.status_model = False
                     horario.save()
                     return JsonResponse({'message': 'Horario eliminado con exito'}, status=200)
                 if type_request == 'nw_plantilla':
                     return JsonResponse(self.nw_plantilla(), safe=False)
-                horarios = list(Horario.objects.filter(status_model=True).values())
+                horarios = list(Horario.objects.filter(
+                    status_model=True).values())
                 return JsonResponse(horarios, safe=False)
             except Exception as e:
                 return JsonResponse({'message': str(e)}, status=400)
-        
-    
-        
+
+
 class SelectProfesorAjax(ListView):
     model = Profesor
 
     @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            id = request.GET.get('id', None)
+            type = request.POST.get('type', None)
+            if type == 'change_status':
+                estadoprofesor = EstadoProfesorHorario.objects.get(
+                    id=request.POST.get('id'))
+                estadoprofesor.activo = not estadoprofesor.activo
+                estadoprofesor.save()
+                return JsonResponse({'message': 'Profesor actualizado con exito'}, status=200)
+            id_horario = request.POST.get('id_horario')
             profesores = list(Profesor.objects.filter(
-                materia=id, activo=True).values())
-            return JsonResponse(profesores, safe=False)
+                status_model=True).values())
+            profesores_list = []
+            for p in profesores:
+                try:
+                    profesor = EstadoProfesorHorario.objects.get(
+                        horario = Horario.objects.get(id=id_horario),
+                        profesor = Profesor.objects.get(id=p['id'])
+                    )
+                except EstadoProfesorHorario.DoesNotExist:
+                    profesor = EstadoProfesorHorario.objects.create(
+                        horario = Horario.objects.get(id=id_horario),
+                        profesor = Profesor.objects.get(id=p['id'])
+                    )
+                finally:
+                    profesores_list.append({
+                        'id': profesor.id,
+                        'nombre': p['nombre'],
+                        'alias': p['alias'],
+                        'activo': profesor.activo,
+                        'id_profesor': p['id']
+                    })
+            return JsonResponse(profesores_list, safe=False)
         except Exception as e:
             return JsonResponse({'message': str(e)}, status=400)
 

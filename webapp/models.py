@@ -166,8 +166,8 @@ class EstadoProfesorHorario(models.Model):
     Miercoles = models.BooleanField(default=True)
     Jueves = models.BooleanField(default=True)
     Viernes = models.BooleanField(default=True)
-    Sabado = models.BooleanField(default=False)
-    Domingo = models.BooleanField(default=False)
+    Sabado = models.BooleanField(default=True)
+    Domingo = models.BooleanField(default=True)
     anotaciones = models.TextField(blank=True, null=True)
     status_model = models.BooleanField(default=True)
 
