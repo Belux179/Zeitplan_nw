@@ -391,6 +391,33 @@ class SelectProfesorAjax(ListView):
                 estadoprofesor.save()
                 return JsonResponse({'message': 'Profesor actualizado con exito'}, status=200)
             id_horario = request.POST.get('id_horario')
+            if type == 'condiciones':
+                estado_profesor = EstadoProfesorHorario.objects.get(id=request.POST.get('id'))
+                print(estado_profesor.cantidad_max_periodo)
+                if estado_profesor.cantidad_max_periodo == 0:
+                    estado_profesor.cantidad_max_periodo = Horario.objects.get(id=id_horario).Cantidad_periodos()
+                    estado_profesor.save()
+                form = EstadoProfesorHorarioForm(instance=estado_profesor)
+                # separa el form en 2 partes
+                print(dir(form))
+                cantidad_max_periodo = str(form['cantidad_max_periodo'])
+                Lunes = form['Lunes'].__str__()
+                Martes = form['Martes'].__str__()
+                Miercoles = form['Miercoles'].__str__()
+                Jueves = form['Jueves'].__str__()
+                Viernes = form['Viernes'].__str__()
+                Sabado = form['Sabado'].__str__()
+                Domingo = form['Domingo'].__str__()
+                anotaciones = form['anotaciones'].__str__()  
+                
+                
+                context ={
+                    'cantidad_max_periodos': cantidad_max_periodo,
+                    'Lunes': Lunes, 'Martes': Martes, 'Miercoles': Miercoles, 'Jueves': Jueves, 'Viernes': Viernes, 'Sabado': Sabado, 'Domingo': Domingo,
+                    'anotaciones': anotaciones,
+                }
+                return JsonResponse(context, safe=False, status=200)
+
             profesores = list(Profesor.objects.filter(
                 status_model=True).values())
             profesores_list = []
@@ -401,9 +428,12 @@ class SelectProfesorAjax(ListView):
                         profesor = Profesor.objects.get(id=p['id'])
                     )
                 except EstadoProfesorHorario.DoesNotExist:
+                    
                     profesor = EstadoProfesorHorario.objects.create(
                         horario = Horario.objects.get(id=id_horario),
-                        profesor = Profesor.objects.get(id=p['id'])
+                        profesor = Profesor.objects.get(id=p['id']),
+                        cantidad_max_periodo = Horario.objects.get(id=id_horario).Cantidad_periodos(),
+
                     )
                 finally:
                     profesores_list.append({

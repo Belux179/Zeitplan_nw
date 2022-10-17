@@ -87,7 +87,7 @@
                     orderable: false,
                     render: function(data, type, row) {      
                         return ''+
-                        '<a onclick="modal_condiciones('+row.id+')" class="btn btn-sm btn-primary mr-1" data-toggle="tooltip" data-placement="top" title="Condiciones"><i class="fas fa-book mr-1"></i>Condiciones</a>'+   
+                        '<a onclick="modal_condiciones('+row.id+',\''+row.nombre+'\')" class="btn btn-sm btn-primary mr-1" data-toggle="tooltip" data-placement="top" title="Condiciones"><i class="fas fa-book mr-1"></i>Condiciones</a>'+   
                         '<a onclick="update_profesor('+data+')" class="btn btn-primary btn-sm m-1"><i class="fas fa-edit"></i></a>';
                     }
                 }, {
@@ -114,21 +114,78 @@
     modal_condiciones(id)
     */
     //async
-    async function modal_condiciones(id){
+    async function modal_condiciones(id, nombre, form_html='',){
         try{
-            $.ajax({
-                url: '{% url 'select_profesores_ajax' %}',
-                type: 'POST',
-                data: {
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                    'id': id,
-                    'type': 'condicional'
-                },
-                success: await function(data) {
-                    form_html ='';
-                }
+            
+            if(form_html===''){
+                await $.ajax({
+                    url: '{% url 'select_profesores_ajax' %}',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'id': id,
+                        'id_horario': {{id_horario}},
+                        'type': 'condiciones',
+                    },
+                    success: function(data) {
+                        form_html =''+
+                        '<div class="form-group">'+
+                            '<label for="cantidad_max_periodos">Cantidad Maxima de Periodos</label>'+
+                            data.cantidad_max_periodos+
+                        '</div>'+
+                        // dias de trabajo Lunes [] Martes [] Miercoles [] Jueves [] Viernes [] Sabado [] Domingo []
+                        '<div class="form-group row">'+
+                            '<div class="col-md-12">'+
+                                '<label for="dias_trabajo">Dias</label>'+
+                            '</div>'+
+                            '<div class="col-md-12">'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Lunes+'<label class="form-check-label" for="Lunes">Lunes</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Martes+'<label class="form-check-label" for="Martes">Martes</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Miercoles+'<label class="form-check-label" for="Miercoles">Miercoles</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Jueves+ '<label class="form-check-label" for="Jueves">Jueves</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Viernes+'<label class="form-check-label" for="Viernes">Viernes</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Sabado+ '<label class="form-check-label" for="Sabado">Sabado</label>'+
+                                '</div>'+
+                                '<div class="form-check form-check-inline">'+
+                                    data.Domingo+'<label class="form-check-label" for="Domingo">Domingo</label>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>'+
+                        // anotaciones
+                        '<div class="form-group row">'+
+                            '<div class="col-md-12">'+
+                                '<label for="anotaciones">Anotaciones</label>'+
+                                data.anotaciones+
+                            '</div>'+
+                        '</div>';
+                    }
+                });
+            }
+            Swal.fire({
+                title:'Condiciones del profesor '+nombre,
+                html:   '<form id="form_add_grado" method="POST">'+
+                            '{% csrf_token %}'+
+                            '<input type="hidden" name="id" value="'+id+'">'+
+                            form_html +               
+                        '</form>',
+                showCancelButton: true,
+                confirmButton: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                showLoaderOnConfirm: true,
+            }).then((result) =>{
+
             });
-            Swal.fi
 
         }catch(error){
             console.log(error);

@@ -1,3 +1,4 @@
+from tkinter import Widget
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -174,7 +175,51 @@ class HorarioForm(forms.ModelForm):
                 'max_length': 'Ciclo demasiado largo',
             }
         }
+class EstadoProfesorHorarioForm(forms.ModelForm):
+    class Meta:
+        model = EstadoProfesorHorario
+        fields = ['cantidad_max_periodo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo','anotaciones']
+        widgets = {
+            'cantidad_max_periodo': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Cantidad maxima de periodos', 'id': 'cantidad_max_periodo_horario_form_horario'}),
+            'Lunes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Lunes')",'id': 'Lunes_horario_form_horario'}),
+            'Martes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Martes')", 'id': 'Martes_horario_form_horario'}),
+            'Miercoles': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Miercoles')", 'id': 'Miercoles_horario_form_horario'}),
+            'Jueves': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Jueves')", 'id': 'Jueves_horario_form_horario'}),
+            'Viernes': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Viernes')", 'id': 'Viernes_horario_form_horario'}),
+            'Sabado': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Sabado')", 'id': 'Sabado_horario_form_horario'}),
+            'Domingo': forms.CheckboxInput(attrs={'class': '','onclick':"check_dias('Domingo')", 'id': 'Domingo_horario_form_horario'}),
+            'anotaciones': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Anotaciones', 'id': 'anotaciones_horario_form_horario'}),
+        }
+        labels = {
+            'cantidad_max_periodo': 'Cantidad maxima de periodos',
+            'anotaciones': 'Anotaciones',
+        }
+        error_messages = {
+            'cantidad_max_periodo': {
+                'max_length': 'Cantidad maxima de periodos demasiado larga',
+                'required': 'Cantidad maxima de periodos requerida',
+            },
+        }
 
+        def __init__(self, *args, **kwargs):
+            horario = kwargs.pop('horario') # get the horario from the view
+            horario = Horario.objects.get(id=horario)
+            super(EstadoProfesorHorarioForm, self).__init__(*args, **kwargs)
+            # hide the fields that are not in the horario
+            if not horario.Lunes:
+                self.fields['Lunes'].widget = forms.HiddenInput()
+            if not horario.Martes:
+                self.fields['Martes'].widget = forms.HiddenInput()
+            if not horario.Miercoles:
+                self.fields['Miercoles'].widget = forms.HiddenInput()
+            if not horario.Jueves:
+                self.fields['Jueves'].widget = forms.HiddenInput()
+            if not horario.Viernes:
+                self.fields['Viernes'].widget = forms.HiddenInput()
+            if not horario.Sabado:
+                self.fields['Sabado'].widget = forms.HiddenInput()
+            if not horario.Domingo:
+                self.fields['Domingo'].widget = forms.HiddenInput() 
 
 class AsignaturaForm(forms.ModelForm):
     class Meta:

@@ -128,6 +128,14 @@ class Horario(models.Model):
     def Dias_dict(self):
         return {'Lunes': self.Lunes, 'Martes': self.Martes, 'Miercoles': self.Miercoles, 'Jueves': self.Jueves, 'Viernes': self.Viernes, 'Sabado': self.Sabado, 'Domingo': self.Domingo}
     
+    def Cantidad_periodos(self):
+        cantidad = 0
+        for dia in self.Dias_list():
+            if dia:
+                cantidad += 1
+        return cantidad
+
+
     class Meta:
         verbose_name = 'Plantilla de horario'
         verbose_name_plural = 'Plantillas de horario'
@@ -160,7 +168,7 @@ class EstadoProfesorHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     profesor = models.ForeignKey(Profesor, on_delete=models.DO_NOTHING)
-    cantidad_max_periodo = models.IntegerField(default=30)
+    cantidad_max_periodo = models.IntegerField(default=0)
     Lunes = models.BooleanField(default=True)
     Martes = models.BooleanField(default=True)
     Miercoles = models.BooleanField(default=True)
