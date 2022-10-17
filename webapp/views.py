@@ -41,7 +41,7 @@ class ProfesoresView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context = {
-            'form': ProfesorForm(),
+            'form_add_profesor': ProfesorForm(),
             'Profesores': Profesor.objects.all(),
             'form_nwhorario': NewHorarioForm(),
         }
@@ -75,9 +75,9 @@ class GradosView(ListView):
             'Materias': Materia.objects.all(),
         }
         if 'form_grado' not in context:
-            context['form_grado'] = GradoForm
+            context['form_add_grado'] = GradoForm
         if 'form_materia' not in context:
-            context['form_materia'] = MateriaForm
+            context['form_add_materia'] = MateriaForm
         return context
 
     @method_decorator(login_required)

@@ -613,7 +613,25 @@
     }
     function add_materia(id_grado=0, form_html='') {
         if (id_grado == 0){
-            form_html = form_html || '{{ form_add_materia|escapejs }}';
+            //form_html = form_html || '{{ form_add_materia|escapejs }}';
+            if (form_html == ''){ 
+                $.ajax({
+                    url: '{% url 'materias_ajax' %}',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'id_grado': id_grado,
+                        'type': 'form_html',
+                    },
+                    success: function(data) {
+                        form_html = data.form;
+                        add_materia(id_grado, form_html);
+                    },
+                    error: function(data) {
+                        console.log(data);
+                    }
+                });
+            }
         }else{
             $.ajax({
                 url: '{% url 'materias_ajax' %}',

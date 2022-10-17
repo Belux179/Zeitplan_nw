@@ -1,4 +1,3 @@
-from xml.dom import ValidationErr
 from django.http import JsonResponse
 from django.views.generic import ListView
 from django.utils.decorators import method_decorator
@@ -211,6 +210,10 @@ class MateriasAjax(ListView):
                         materia.activo = True
                     materia.save()
                     return JsonResponse({'message': 'Materia eliminada con exito'}, status=200)
+                if type_request == 'form_html':
+                    form = MateriaForm()
+                    html_form = str(form)
+                    return JsonResponse({'form': html_form}, status=200)
 
                 if type_request == 'delete':
                     materia = Materia.objects.get(id=id)
@@ -312,13 +315,13 @@ class HorariosAjax(ListView, GeneradorHorario):
                 type_request = request.POST.get('type', None)
                 if type_request == 'nw_plantilla':
                     return JsonResponse(self.nw_plantilla(), safe=False)
-                horarios = list(Horario.objects.filter(
-                    status_model=True).values())
+                horarios = list(Horario.objects.filter(status_model=True).values())
                 return JsonResponse(horarios, safe=False)
             except Exception as e:
                 return JsonResponse({'message': str(e)}, status=400)
-
-
+        
+    
+        
 class SelectProfesorAjax(ListView):
     model = Profesor
 
