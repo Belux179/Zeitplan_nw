@@ -138,8 +138,9 @@ class NewHorarioForm(forms.ModelForm):
 class HorarioForm(forms.ModelForm):
     class Meta:
         model = Horario
-        fields = ['nombre', 'ciclo' ,'estado_del_horario', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo', 'cantidad_periodo', 'hora_inicio', 'duracion_periodo_hour', 'duracion_periodo_minute']
+        fields = ['id', 'nombre', 'ciclo' ,'estado_del_horario', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo', 'cantidad_periodo', 'hora_inicio', 'duracion_periodo_hour', 'duracion_periodo_minute']
         widgets = {
+            'id': forms.HiddenInput(attrs={'class': 'form-control', 'placeholder': 'id', 'id': 'id_horario_form_horario'}),
             'nombre': forms.TextInput(attrs={'class': 'm-1', 'placeholder': 'Nombre', 'id': 'nombre_horario_form_horario'}),
             'ciclo': forms.TextInput(attrs={'class': 'm-1', 'placeholder': 'Ciclo', 'id': 'ciclo_horario_form_horario'}),
             'estado_del_horario': forms.TextInput(attrs={'class': 'form-control', 'type': 'hidden', 'id': 'estado_horario_form_horario'}),

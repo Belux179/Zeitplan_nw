@@ -112,7 +112,8 @@ class UsuarioView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            form_pregunta = PreguntasForm(instance=Pregunta.objects.get(usuario=self.request.user))
+            form_pregunta = PreguntasForm(
+                instance=Pregunta.objects.get(usuario=self.request.user))
         except ObjectDoesNotExist:
             form_pregunta = PreguntasForm()
         context = {
@@ -122,7 +123,7 @@ class UsuarioView(ListView):
             'id_user': self.request.user.id,
         }
         return context
-        
+
     def post(self, request, *args, **kwargs):
         if request.POST.get('tipo') == 'usuario':
             # validar que el password1 y password2 sean iguales
@@ -131,11 +132,18 @@ class UsuarioView(ListView):
             user = User.objects.get(id=request.user.id)
             user.username = request.POST.get('username')
             user.email = request.POST.get('email')
-            #encriptar la contraseña y guardar la
+            # encriptar la contraseña y guardar la
             user.set_password(request.POST.get('password1'))
             user.save()
             return redirect('usuario')
-        return render(request, self.template_name, {'form': form_usuario, 'form_pregunta': form_pregunta})
+        try:
+            form_pregunta = PreguntasForm(
+                instance=Pregunta.objects.get(usuario=self.request.user))
+        except ObjectDoesNotExist:
+            form_pregunta = PreguntasForm()
+        form_usuario = self.form_class(instance=self.request.user)
+        form_nwhorario = NewHorarioForm()
+        return render(request, self.template_name, {'form': form_usuario, 'form_pregunta': form_pregunta, 'form_nwhorario': form_nwhorario, 'id_user': self.request.user.id})
 
 
 class PlantillaView(ListView):
@@ -148,7 +156,7 @@ class PlantillaView(ListView):
         try:
             self.id_horario = kwargs['id_horario']
             self.horario = Horario.objects.get(id=self.id_horario)
-            
+
             return super().dispatch(request, *args, **kwargs)
         except Exception as e:
             print(e)
@@ -164,14 +172,47 @@ class PlantillaView(ListView):
         }
         return context
 
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(instance=self.horario, data=request.POST)
+        if form.is_valid():
+            form.save()
+            if self.horario.no_page == 1:
+                self.horario.no_page = 2
+                self.horario.status_model = True 
+                self.horario.save()
+            return redirect('select_profesor', self.id_horario)
+        return render(request, self.template_name, {'form': form, 'id_horario': self.id_horario, 'estado_del_horario': self.horario.no_page})
+
+class SelectProfesorView(ListView):
+    model=Profesor
+    template_name='new_horario/select_profesor.html'
+    
+    @ method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.id_horario=kwargs['id_horario']
+            self.estado_del_horario = Horario.objects.get(id=self.id_horario).no_page
+            return super().dispatch(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        
+        context=super().get_context_data(**kwargs)
+        context={
+            'id_horario': self.id_horario,
+            'estado_del_horario': self.estado_del_horario,
+        }
+        return context
 
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        return render(request, self.template_name, {'form': form})
+        pass
+        return redirect('plantilla', self.id_horario)
 
 class ExportarView(ListView):
-    template_name = 'web/exportar.html'
+    template_name='web/exportar.html'
 
-    @method_decorator(login_required)
+    @ method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)  # """
