@@ -195,8 +195,8 @@ class EstadoGradoHorario(models.Model):
     Miercoles = models.BooleanField(default=True)
     Jueves = models.BooleanField(default=True)
     Viernes = models.BooleanField(default=True)
-    Sabado = models.BooleanField(default=False)
-    Domingo = models.BooleanField(default=False)
+    Sabado = models.BooleanField(default=True)
+    Domingo = models.BooleanField(default=True)
     status_model = models.BooleanField(default=True)
 
     def __str__(self):
@@ -212,7 +212,14 @@ class EstadoMateriaHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     materia = models.ForeignKey(Materia, on_delete=models.DO_NOTHING)
-
+    Lunes = models.BooleanField(default=True)
+    Martes = models.BooleanField(default=True)
+    Miercoles = models.BooleanField(default=True)
+    Jueves = models.BooleanField(default=True)
+    Viernes = models.BooleanField(default=True)
+    Sabado = models.BooleanField(default=True)
+    Domingo = models.BooleanField(default=True)
+    
     def __str__(self):
         return str(self.activo)
 
@@ -261,6 +268,21 @@ class CondicionEstadoGradoHorario(models.Model):
     class Meta:
         verbose_name = 'Condicion de estado de grado en horario'
         verbose_name_plural = 'Condiciones de estado de grado en horario'
+        ordering = ['activo',]
+
+class CondicionEstadoMateriaHorario(models.Model):
+    activo = models.BooleanField(default=True)
+    estado_materia_horario = models.ForeignKey(
+        EstadoMateriaHorario, on_delete=models.CASCADE)
+    dia = models.CharField(max_length=255, blank=True, null=True)
+    hora_inicio = models.IntegerField(default=0)
+    minuto_inicio = models.IntegerField(default=0)
+    hora_fin = models.IntegerField(default=0)
+    minuto_fin = models.IntegerField(default=0)
+    status_model = models.BooleanField(default=True)
+    class Meta:
+        verbose_name = 'Condicion de estado de materia en horario'
+        verbose_name_plural = 'Condiciones de estado de materia en horario'
         ordering = ['activo',]
 
 class Asignatura(models.Model):

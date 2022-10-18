@@ -8,11 +8,14 @@ from django.contrib.auth.decorators import login_required
 from .forms import *
 from .models import *
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+# importar JsonResponse
+from django.http import JsonResponse
 
 # user
 from django.contrib.auth.models import User
 from django import forms
 from .functionHorario import AllHorarioView
+
 
 
 # home con validacion de usuario con login_required
@@ -157,7 +160,22 @@ class Select_page_HorarioView(ListView, AllHorarioView):
             return self.select_posicion(0, int(no_page), id_horario)
         except Exception as e:
             return redirect('home')
-
+        
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            id_horario = kwargs.get('id_horario')
+            no_page_actual = request.POST.get('no_page_actual')
+            horario = Horario.objects.get(id=id_horario)
+            if int(horario.no_page) == int(no_page_actual):
+                print("asdasdaas--------")
+                horario.no_page = int(no_page_actual) + 1
+                horario.save()
+                return JsonResponse({'status': 'ok'}, status=200)
+            else:
+                return JsonResponse({'status': 'ok'}, status=200)
+        except Exception as e:
+            return JsonResponse({'status': 'error'}, status=500)
 
 class PlantillaView(ListView):
     model = Horario
@@ -201,7 +219,7 @@ class SelectProfesorView(ListView):
     model = Profesor
     template_name = 'new_horario/select_profesor.html'
 
-    @ method_decorator(login_required)
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         try:
             self.id_horario = kwargs['id_horario']
@@ -225,6 +243,36 @@ class SelectProfesorView(ListView):
     def post(self, request, *args, **kwargs):
         pass
         return redirect('plantilla', self.id_horario)
+
+class SelectGradoView(ListView):
+    model = Grado
+    template_name = 'new_horario/select_grado_materia.html'
+
+    @ method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.id_horario = kwargs['id_horario']
+            self.estado_del_horario = Horario.objects.get(
+                id=self.id_horario).no_page
+            return super().dispatch(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(self.estado_del_horario)
+        context = {
+            'id_horario': self.id_horario,
+            'form_add_grado': GradoForm(),
+            'estado_del_horario': self.estado_del_horario,
+        }
+        return context
+
+    def post(self, request, *args, **kwargs):
+        pass
+        return redirect('plantilla', self.id_horario)
+
 
 
 class ExportarView(ListView):

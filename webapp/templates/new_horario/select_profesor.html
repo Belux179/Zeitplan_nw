@@ -50,12 +50,37 @@
         </div>
     </div>
 </div>
-
-
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <div class="btn-group float-right">
+            <button id="button_next" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+                SIGUIENTE .<i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock body %}
 
 {%block javascript%}
 <script type="text/javascript">
+    $('#button_next').click(function(){
+        $.ajax({
+            url: "/modif/{{id_horario}}/",
+            type: "POST",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'no_page_actual': 2,
+                'id_horario': '{{id_horario}}',
+            },
+            success: function (data) {
+                window.location.href = "/select_grado/{{id_horario}}/";
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    });
     try {
         $(document).ready(function() {
             $('#tabla_profesores').DataTable({
@@ -176,15 +201,67 @@
                 title:'Condiciones del profesor '+nombre,
                 html:   '<form id="form_add_grado" method="POST">'+
                             '{% csrf_token %}'+
-                            '<input type="hidden" name="id" value="'+id+'">'+
+                            '<input type="hidden" name="id" value="'+id+'" id="id_condicion">'+
                             form_html +               
                         '</form>',
                 showCancelButton: true,
                 confirmButton: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    //validar que los campos del id cantidad_max_periodo_horario_form_horario no esten vacios
+                    
+                    const cantidad_max_periodos = document.getElementById('cantidad_max_periodo_horario_form_horario').value;
+                    const anotaciones = document.getElementById('anotaciones_horario_form_horario').value;
+                    const Lunes = document.getElementById('Lunes_horario_form_horario').checked;
+                    const Martes = document.getElementById('Martes_horario_form_horario').checked;
+                    const Miercoles = document.getElementById('Miercoles_horario_form_horario').checked;
+                    const Jueves = document.getElementById('Jueves_horario_form_horario').checked;
+                    const Viernes = document.getElementById('Viernes_horario_form_horario').checked;
+                    const Sabado = document.getElementById('Sabado_horario_form_horario').checked;
+                    const Domingo = document.getElementById('Domingo_horario_form_horario').checked;
+                    if (Lunes == false && Martes == false && Miercoles == false && Jueves == false && Viernes == false && Sabado == false && Domingo == false) {
+                        Swal.showValidationMessage('Por favor seleccione al menos un dia')
+                    }
+                    return {'cantidad_max_periodos': cantidad_max_periodos, 'anotaciones': anotaciones, 'Lunes': Lunes, 'Martes': Martes, 'Miercoles': Miercoles, 'Jueves': Jueves, 'Viernes': Viernes, 'Sabado': Sabado, 'Domingo': Domingo}
+                },
             }).then((result) =>{
-
+                $.ajax({
+                    url: '{% url 'select_profesores_ajax' %}',
+                    type: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'id': id,
+                        'id_horario': {{id_horario}},
+                        'cantidad_max_periodo': result.value.cantidad_max_periodos,
+                        'anotaciones': result.value.anotaciones,
+                        'Lunes': result.value.Lunes,
+                        'Martes': result.value.Martes,
+                        'Miercoles': result.value.Miercoles,
+                        'Jueves': result.value.Jueves,
+                        'Viernes': result.value.Viernes,
+                        'Sabado': result.value.Sabado,
+                        'Domingo': result.value.Domingo,
+                        'type': 'condiciones_save',
+                    },
+                    success: function(data) {
+                        if(data.status == 'ok'){
+                            Swal.fire({
+                                title: 'Condiciones del profesor '+nombre+' guardadas',
+                                icon: 'success',
+                                confirmButtonText: 'Aceptar',
+                            }).then((result) => {
+                                location.reload();
+                            })
+                        }else{
+                            Swal.fire({
+                                title: 'Error al guardar las condiciones del profesor '+nombre,
+                                icon: 'error',
+                                confirmButtonText: 'Aceptar',
+                            })
+                        }
+                    }
+                });
             });
 
         }catch(error){
