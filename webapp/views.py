@@ -17,7 +17,6 @@ from django import forms
 from .functionHorario import AllHorarioView
 
 
-
 # home con validacion de usuario con login_required
 class HomeView(TemplateView):
     template_name = 'web/home.html'
@@ -160,7 +159,7 @@ class Select_page_HorarioView(ListView, AllHorarioView):
             return self.select_posicion(0, int(no_page), id_horario)
         except Exception as e:
             return redirect('home')
-        
+
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         try:
@@ -176,6 +175,7 @@ class Select_page_HorarioView(ListView, AllHorarioView):
                 return JsonResponse({'status': 'ok'}, status=200)
         except Exception as e:
             return JsonResponse({'status': 'error'}, status=500)
+
 
 class PlantillaView(ListView):
     model = Horario
@@ -244,6 +244,7 @@ class SelectProfesorView(ListView):
         pass
         return redirect('plantilla', self.id_horario)
 
+
 class SelectGradoView(ListView):
     model = Grado
     template_name = 'new_horario/select_grado_materia.html'
@@ -274,10 +275,33 @@ class SelectGradoView(ListView):
         return redirect('plantilla', self.id_horario)
 
 
+class AsignaturasView(ListView):
+    template_name = 'new_horario/select_asignatura.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.id_horario = kwargs['id_horario']
+            self.estado_del_horario = Horario.objects.get(
+                id=self.id_horario).no_page
+            return super().dispatch(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = {
+            'id_horario': self.id_horario,
+            'form_add_asignatura': AsignaturaForm(),
+            'estado_del_horario': self.estado_del_horario,
+        }
+        return context
+
 
 class ExportarView(ListView):
     template_name = 'web/exportar.html'
 
-    @ method_decorator(login_required)
+    @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)  # """

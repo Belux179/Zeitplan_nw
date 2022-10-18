@@ -71,17 +71,44 @@
       </div>
     </div>
   </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group float-right">
+                <button id="button_next" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+                    SIGUIENTE .<i class="fa fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascript %}
 <script type="text/javascript">
+$('#button_next').click(function(){
+    $.ajax({
+        url: "/modif/{{id_horario}}/",
+        type: "POST",
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'no_page_actual': 3,
+            'id_horario': '{{id_horario}}',
+        },
+        success: function (data) {
+            window.location.href = "/select_asignatura/{{id_horario}}/";
+        },
+        error: function (data) {
+            console.log('Error:', data);
+        }
+    });
+});
 try {
     $(document).ready(function() {
         $('#tabla_grados').DataTable({
             "processing": true,
             "responsive": true,
             "language": {
-                {% load static %}"url": "{% static 'json/table_es.json' %}"
+                {% load static %}
+                "url": "{% static 'json/table_es.json' %}"
             },
             ajax: {
                 url: '{% url 'select_grados_ajax' %}',
