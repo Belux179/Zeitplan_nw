@@ -1,0 +1,267 @@
+{% extends "base/aplicacion.html" %}
+
+{% block title %} Horario Nuevo{% endblock title %}
+{% block title_body %} <h2>Asignaciones para el Horario</h2>{%endblock title_body%}
+
+{% block body %}
+<div class="" style="margin-top: 20px;">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="card-title">Lista de Grados Agregados</h4>
+                </div>
+                <div class="col-md-6">
+                    <div class="btn-group float-right">
+                    <!-- agregue mas botones -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" style=" max-height: 300px; ">
+                <table id="tabla_asignaciones" class="table table-bordered table-hover nowrap" 
+                style="width:100%; ">
+                    <thead class="text-primary">
+                        <th hidden>Id</th>
+                        <th>Grado</th>
+                        <th>Materia</th>
+                        <th>Seleccion de profesor</th>
+                        <th>Asignar</th>
+                    </thead>
+                    <tbody style="overflow: auto;">
+                        {% for materia in materias %}
+                        <tr>
+                            <td hidden>0</td>
+                            <td>{{ materia.grado }}</td>
+                            <td>{{ materia.nombre }}</td>
+                            <td>
+                                <select class="form-control" id="profesor_as_{{ materia.id }}">
+                                    <option value="0">Seleccione un profesor</option>
+                                    {% for profesor in profesores %}
+                                    <option value="{{ profesor.id }}">{{ profesor.nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" onclick="asignar({{ materia.id }})">Asignar</button>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_eliminar">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% for asignacion in asignaciones %}
+                        <tr>
+                            <td hidden>{{ asignacion.id }}</td>
+                            <td>{{asignacion.materia.materia.grado}}</td>
+                            <td>{{asignacion.materia}}</td>
+                            <td>
+                                <select class="form-control" id="profesor_re_{{asignacion.id}}">
+                                    <option value="0">Seleccione un profesor</option>
+                                    {% for profesor in profesores %}
+                                    {% if profesor.id == asignacion.profesor.id %}
+                                    <option value="{{ profesor.id }}" selected>{{ profesor.nombre }}</option>
+                                    {% else %}
+                                    <option value="{{ profesor.id }}">{{ profesor.nombre }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" onclick="reasignar({{asignacion.id}})">Reasignar</button>
+                                <button type="button" class="btn btn-success btn-sm " data-toggle="modal" data-target="#modal_asignar">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="card-title">Datos de los Profesores</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="btn-group float-right">
+                        <!-- agregue mas botones -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive" style="max-height: 300px;">
+                    <table id="tabla_profesores" class="table table-bordered table-hover nowrap" style="width:100%">
+                        <thead class="text-primary">
+                            <th>ID</th>
+                            <th>Profesores</th>
+                            <th>Alias</th>
+                            <th>No. Asignaciones</th>
+                            <th>No. periodos max</th>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <!-- apartado para un textArea para anotaciones -->
+        <div class="card">
+            <div class="card-header">
+                <div class="col-md-6">
+                    <h4 class="card-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                            Anotaciones
+                        </a>
+                    </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- text area -->
+                    <textarea class="form-control" id="anotaciones" rows="3" placeholder="Anotaciones" style="width: 100%; height: 100px;"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="btn-group float-right">
+            <button id="button_next" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+                Generar .<i class="fa fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+{%block javascript%}
+<script type="text/javascript">
+    $('#button_generate').click(function(){
+        
+    });
+    try {
+        
+        $(document).ready(function() {
+            $('#tabla_asignaciones').DataTable({
+                "processing": true,
+                "responsive": true,
+                'paging': false,
+                'ordering': false,
+                "order": [[ 0, "desc" ]],
+                "language": {
+                    {% load static %}
+                    "url": "{% static 'json/table_es.json' %}"
+                },
+    
+            });
+        });// */
+        
+    } catch (error) {
+        console.log(error);
+    }
+    try {
+        $(document).ready(function() {
+            $('#tabla_profesores').DataTable({
+                'paging': false,
+                "processing": true,
+                "responsive": true,
+                "language": {
+                    {% load static %}
+                    "url": "{% static 'json/table_es.json' %}"
+                },
+                ajax: {
+                    url: '{% url 'select_asignaturas_ajax' %}',
+                    type: 'POST',
+                    dataSrc: '',
+                    data: {
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                        'id_horario': {{ id_horario }}
+                        'type': 'profesores'
+                    }
+                },
+                columns: [
+                    {data: 'id'},
+                    {data: 'profesor'},
+                    {data: 'alias'},
+                    {data: 'no_asignaciones'},
+                    {data: 'no_periodos_max'},
+                ],
+                columnDefs: [],
+    
+            });
+        });// */
+        
+    } catch (error) {
+        console.log(error);
+    }
+    function asignar(id_materia){
+        var id_profesor = $('#profesor_as_'+id_materia).val();
+        if(id_profesor == 0){
+            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Seleccione un profesor', });
+            return;
+        }
+        $.ajax({
+            url: '{% url 'select_asignaturas_ajax' %}',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'id_materia': id_materia,
+                'id_profesor': id_profesor,
+                'id_horario': {{ id_horario }}
+                'type': 'asignar'
+            },
+            success: function(data){
+                if(data.status == 'ok'){
+                    Swal.fire({ icon: 'success', title: 'Asignación exitosa', text: 'Se ha asignado la materia correctamente', });
+                    location.reload();
+                }else{
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'No se pudo asignar la materia', });
+                }
+            },
+            error: function(data){
+                alert('Error al asignar');
+            }
+        });
+    }
+    function reasignar(id_asignacion){
+        var id_profesor = $('#profesor_re_'+id_asignacion).val();
+        if(id_profesor == 0){
+            Swal.fire({ icon: 'error', title: 'Oops...', text: 'Seleccione un profesor', });
+            return;
+        }
+        $.ajax({
+            url: '{% url 'select_asignaturas_ajax' %}',
+            type: 'POST',
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'id_asignatura': id_asignacion,
+                'id_profesor': id_profesor,
+                'id_horario': {{ id_horario }}
+                'type': 'reasignar'
+            },
+            success: function(data){
+                if(data.status == 'ok'){
+                    Swal.fire({ icon: 'success', title: 'Reasignación exitosa', text: 'Se ha reasignado la materia correctamente', });
+                    location.reload();
+                }else{
+                    Swal.fire({ icon: 'error', title: 'Oops...', text: 'No se pudo reasignar la materia', });
+                }
+            },
+            error: function(data){
+                alert('Error al reasignar');
+            }
+        });
+    }
+</script>
+{%endblock javascript%}

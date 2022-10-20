@@ -24,9 +24,9 @@
         </div>
         <nav>
             <ul class="nav__links">
-                <li><a href="{% url 'home'%}">HOME</a></li>
+                <li><a href="#">HOME</a></li>
                 {% if user.is_authenticated %}
-                    <li> <a href="{% url 'usuario' %}">USUARIO: {{ user.username|upper }}</a></li>
+                    <li> <a href="#">USUARIO: {{ user.username|upper }}</a></li>
                 {% endif %} 
             </ul>
         </nav>
@@ -56,8 +56,8 @@
                         <a href="/plantilla/{{id_horario}}">Plantilla</a>
                     </li>{% url "select_profesor" as select_profesor %}
                     {% else %}
-                    <li class="active">
-                        <a href="/plantilla/{{id_horario}}">Plantilla</a>
+                    <li {% if request.path|slice:"1:10" == 'plantilla' %} class="active" {% endif %}>
+                        <a href="{% url 'plantilla' %}">Plantilla</a>
                     </li>{% url "select_profesor" as select_profesor %}
                     {% endif %}
                     {% if estado_del_horario > 1 %}
@@ -210,6 +210,7 @@
                                 'type': 'crear',
                             },
                             success: function (data) {
+                                // redireccionar a /plantilla/data.id
                                 if (data.id) {
                                     window.location.href = '/plantilla/'+data.id;
                                 }
