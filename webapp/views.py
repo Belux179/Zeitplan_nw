@@ -14,7 +14,7 @@ from django.http import JsonResponse
 # user
 from django.contrib.auth.models import User
 from django import forms
-from .functionHorario import AllHorarioView
+from .functionHorario import AllHorarioView, Asig
 
 
 # home con validacion de usuario con login_required
@@ -275,29 +275,40 @@ class SelectGradoView(ListView):
         return redirect('plantilla', self.id_horario)
 
 
-class AsignaturasView(ListView):
+class Select_AsignaturasView(ListView, Asig):
     template_name = 'new_horario/select_asignatura.html'
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         try:
             self.id_horario = kwargs['id_horario']
-            self.estado_del_horario = Horario.objects.get(
-                id=self.id_horario).no_page
-            return super().dispatch(request, *args, **kwargs)
+            return super(Select_AsignaturasView, self).dispatch(request, *args, **kwargs)
         except Exception as e:
             print(e)
             return redirect('home')
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context = {
-            'id_horario': self.id_horario,
-            'form_add_asignatura': AsignaturaForm(),
-            'estado_del_horario': self.estado_del_horario,
-        }
-        return context
+        try:
+            context = super().get_context_data(**kwargs)
+            context = {
+                'id_horario': self.id_horario,
+                'estado_del_horario': self.estado_del_horario,
+                **self.Asignatura(self.id_horario),
+            }
+            return context
+        except Exception as e:
+            print(e)
+            return redirect('home')
 
+    def get_queryset(self):
+        try:
+            self.id_horario = self.kwargs['id_horario']
+            self.estado_del_horario = Horario.objects.get(
+                id=self.id_horario).no_page
+            return 
+        except Exception as e:
+            print(e)
+            return redirect('home')
 
 class ExportarView(ListView):
     template_name = 'web/exportar.html'

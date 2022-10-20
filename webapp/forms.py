@@ -58,6 +58,7 @@ class GradoForm(forms.ModelForm):
         }
         # """
 
+       
 
 class ProfesorForm(forms.ModelForm):
     class Meta:
@@ -251,4 +252,11 @@ class AsignaturaForm(forms.ModelForm):
                 'required': 'Horario requerido',
             },
         }
-# """
+        
+    def __init__(self, *args, **kwargs):
+        # escoger los profesores de los estadosprofesorhorairo que esten activos 
+        list_profesores = EstadoProfesorHorario.objects.filter(activo=True, horario=kwargs['initial']['horario']) 
+        list_profesores = [profesor.profesor for profesor in list_profesores]
+        super(AsignaturaForm, self).__init__(*args, **kwargs)
+        self.fields['profesor'].queryset = Profesor.objects.filter(id__in=list_profesores)
+        

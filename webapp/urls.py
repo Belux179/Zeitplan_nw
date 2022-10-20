@@ -18,7 +18,6 @@ urlpatterns += [
     path('grados/ajax/', GradosAjax.as_view(), name='grados_ajax'),
     path('materias/ajax/', MateriasAjax.as_view(), name='materias_ajax'),
     path('horarios/ajax/', HorariosAjax.as_view(), name='horarios_ajax'),
-    path('asignaturas/ajax/', AsignaturasAjax.as_view(), name='asignaturas_ajax'),
     path('periodos/ajax/', PeriodosAjax.as_view(), name='periodos_ajax'),
     path('usuario/ajax/', UsuarioAjax.as_view(), name='usuario_ajax'),
     path('newhorario/ajax/', NewHorarioAjax.as_view(), name='newhorario_ajax'),
@@ -34,8 +33,7 @@ urlpatterns += [
     path('select_grado/<int:id_horario>/',
          SelectGradoView.as_view(), name='select_grado'),
     path('select_asignatura/<int:id_horario>/',
-         AsignaturasView.as_view(), name='asignaturas'),
-
+         Select_AsignaturasView.as_view(), name='asignaturas'),
     #path('select_periodo/<int:id_horario>/', SelectPeriodoView.as_view(), name='select_periodo'),
     #path('horario/<int:id_horario>/', HorarioView.as_view(), name='horario'),
 
@@ -51,4 +49,6 @@ urlpatterns += [
          name='select_grados_ajax'),
     path('select_materia/ajax/', SelectMateriaAjax.as_view(),
          name='select_materias_ajax'),
+    path('select_asignatura/ajax/', SelectAsignaturaAjax.as_view(),
+        name='select_asignaturas_ajax'),
 ]

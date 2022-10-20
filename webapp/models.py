@@ -64,7 +64,7 @@ class Profesor(models.Model):
 class Materia(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(
-        max_length=50, unique=True, blank=False, null=False)
+        max_length=50, blank=False, null=False)
     grado = models.ForeignKey(Grado, on_delete=models.CASCADE)
     status_model = models.BooleanField(default=True)
 
@@ -115,6 +115,9 @@ class Horario(models.Model):
     hora_inicio = models.TimeField(default=timezone.now)
     duracion_periodo_hour = models.IntegerField(default=1)
     duracion_periodo_minute = models.IntegerField(default=0)
+
+    # anotaciones para asignatura en Textarea
+    anotaciones_asignatura =  models.TextField(blank=True, null=True, default='')
 
     def __str__(self):
         return self.nombre
@@ -179,6 +182,8 @@ class EstadoProfesorHorario(models.Model):
     anotaciones = models.TextField(blank=True, null=True)
     status_model = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.profesor.nombre
 
     class Meta:
         verbose_name = 'Estado de profesor en horario'
@@ -200,7 +205,7 @@ class EstadoGradoHorario(models.Model):
     status_model = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.activo)
+        return self.grado.nombre
 
     class Meta:
         verbose_name = 'Estado de grado en horario'
@@ -221,7 +226,7 @@ class EstadoMateriaHorario(models.Model):
     Domingo = models.BooleanField(default=True)
     
     def __str__(self):
-        return str(self.activo)
+        return self.materia.nombre
 
     class Meta:
         verbose_name = 'Estado de materia en horario'
@@ -287,8 +292,8 @@ class CondicionEstadoMateriaHorario(models.Model):
 
 class Asignatura(models.Model):
     activo = models.BooleanField(default=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT)
-    materia = models.ForeignKey(Materia, on_delete=models.PROTECT)
+    profesor = models.ForeignKey(EstadoProfesorHorario, on_delete=models.CASCADE)
+    materia = models.ForeignKey(EstadoMateriaHorario, on_delete=models.CASCADE)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     status_model = models.BooleanField(default=True)
     class Meta:

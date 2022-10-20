@@ -387,16 +387,25 @@ class SelectProfesorAjax(ListView):
             if type == 'condiciones_save':
                 try:
                     print(request.POST.get('cantidad_max_periodo'))
-                    condicion = EstadoProfesorHorario.objects.get(id=request.POST.get('id'))
-                    condicion.cantidad_max_periodo = request.POST.get('cantidad_max_periodo')
+                    condicion = EstadoProfesorHorario.objects.get(
+                        id=request.POST.get('id'))
+                    condicion.cantidad_max_periodo = request.POST.get(
+                        'cantidad_max_periodo')
                     condicion.anotaciones = request.POST.get('anotaciones')
-                    condicion.Lunes = True if request.POST.get('Lunes') == 'true' else False
-                    condicion.Martes = True if request.POST.get('Martes') == 'true' else False
-                    condicion.Miercoles = True if request.POST.get('Miercoles') == 'true' else False
-                    condicion.Jueves = True if request.POST.get('Jueves') == 'true' else False
-                    condicion.Viernes = True if request.POST.get('Viernes') == 'true' else False
-                    condicion.Sabado = True if request.POST.get('Sabado') == 'true' else False
-                    condicion.Domingo = True if request.POST.get('Domingo') == 'true' else False
+                    condicion.Lunes = True if request.POST.get(
+                        'Lunes') == 'true' else False
+                    condicion.Martes = True if request.POST.get(
+                        'Martes') == 'true' else False
+                    condicion.Miercoles = True if request.POST.get(
+                        'Miercoles') == 'true' else False
+                    condicion.Jueves = True if request.POST.get(
+                        'Jueves') == 'true' else False
+                    condicion.Viernes = True if request.POST.get(
+                        'Viernes') == 'true' else False
+                    condicion.Sabado = True if request.POST.get(
+                        'Sabado') == 'true' else False
+                    condicion.Domingo = True if request.POST.get(
+                        'Domingo') == 'true' else False
                     condicion.save()
                     return JsonResponse({'status': 'ok'}, status=200)
                 except Exception as e:
@@ -412,9 +421,11 @@ class SelectProfesorAjax(ListView):
                 return JsonResponse({'message': 'Profesor actualizado con exito'}, status=200)
             id_horario = request.POST.get('id_horario')
             if type == 'condiciones':
-                estado_profesor = EstadoProfesorHorario.objects.get(id=request.POST.get('id'))
+                estado_profesor = EstadoProfesorHorario.objects.get(
+                    id=request.POST.get('id'))
                 if estado_profesor.cantidad_max_periodo == 0:
-                    estado_profesor.cantidad_max_periodo = Horario.objects.get(id=id_horario).Cantidad_periodos()
+                    estado_profesor.cantidad_max_periodo = Horario.objects.get(
+                        id=id_horario).Cantidad_periodos()
                     estado_profesor.save()
                 form = EstadoProfesorHorarioForm(instance=estado_profesor)
                 # separa el form en 2 partes
@@ -426,10 +437,9 @@ class SelectProfesorAjax(ListView):
                 Viernes = form['Viernes'].__str__()
                 Sabado = form['Sabado'].__str__()
                 Domingo = form['Domingo'].__str__()
-                anotaciones = form['anotaciones'].__str__()  
-                
-                
-                context ={
+                anotaciones = form['anotaciones'].__str__()
+
+                context = {
                     'cantidad_max_periodos': cantidad_max_periodo,
                     'Lunes': Lunes, 'Martes': Martes, 'Miercoles': Miercoles, 'Jueves': Jueves, 'Viernes': Viernes, 'Sabado': Sabado, 'Domingo': Domingo,
                     'anotaciones': anotaciones,
@@ -442,15 +452,16 @@ class SelectProfesorAjax(ListView):
             for p in profesores:
                 try:
                     profesor = EstadoProfesorHorario.objects.get(
-                        horario = Horario.objects.get(id=id_horario),
-                        profesor = Profesor.objects.get(id=p['id'])
+                        horario=Horario.objects.get(id=id_horario),
+                        profesor=Profesor.objects.get(id=p['id'])
                     )
                 except EstadoProfesorHorario.DoesNotExist:
-                    
+
                     profesor = EstadoProfesorHorario.objects.create(
-                        horario = Horario.objects.get(id=id_horario),
-                        profesor = Profesor.objects.get(id=p['id']),
-                        cantidad_max_periodo = Horario.objects.get(id=id_horario).Cantidad_periodos(),
+                        horario=Horario.objects.get(id=id_horario),
+                        profesor=Profesor.objects.get(id=p['id']),
+                        cantidad_max_periodo=Horario.objects.get(
+                            id=id_horario).Cantidad_periodos(),
 
                     )
                 finally:
@@ -469,7 +480,6 @@ class SelectProfesorAjax(ListView):
 class SelectGradoAjax(ListView):
     model = Grado
 
-
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         try:
@@ -481,18 +491,19 @@ class SelectGradoAjax(ListView):
                 estadogrado.save()
                 return JsonResponse({'message': 'Grado actualizado con exito'}, status=200)
             id_horario = request.POST.get('id_horario')
-            grados_p = list(Grado.objects.filter(status_model=True, activo=True).values())
+            grados_p = list(Grado.objects.filter(
+                status_model=True, activo=True).values())
             grados_list = []
             for g in grados_p:
                 try:
                     grado = EstadoGradoHorario.objects.get(
-                        horario = Horario.objects.get(id=id_horario),
-                        grado = Grado.objects.get(id=g['id'])
+                        horario=Horario.objects.get(id=id_horario),
+                        grado=Grado.objects.get(id=g['id'])
                     )
                 except Exception as e:
                     grado = EstadoGradoHorario.objects.create(
-                        horario = Horario.objects.get(id=id_horario),
-                        grado = Grado.objects.get(id=g['id']),
+                        horario=Horario.objects.get(id=id_horario),
+                        grado=Grado.objects.get(id=g['id']),
                     )
                 finally:
                     grados_list.append({
@@ -506,9 +517,8 @@ class SelectGradoAjax(ListView):
         except Exception as e:
             print('Error: ', sys.exc_info()[0])
             print(e)
-            
-            return JsonResponse({'message': str(e)}, status=400)
 
+            return JsonResponse({'message': str(e)}, status=400)
 
 
 class SelectMateriaAjax(ListView):
@@ -530,13 +540,13 @@ class SelectMateriaAjax(ListView):
             for m in materias:
                 try:
                     materia = EstadoMateriaHorario.objects.get(
-                        horario = Horario.objects.get(id=id_horario),
-                        materia = Materia.objects.get(id=m['id'])
+                        horario=Horario.objects.get(id=id_horario),
+                        materia=Materia.objects.get(id=m['id'])
                     )
                 except EstadoMateriaHorario.DoesNotExist:
                     materia = EstadoMateriaHorario.objects.create(
-                        horario = Horario.objects.get(id=id_horario),
-                        materia = Materia.objects.get(id=m['id']),
+                        horario=Horario.objects.get(id=id_horario),
+                        materia=Materia.objects.get(id=m['id']),
                     )
                 finally:
                     materias_list.append({
@@ -551,20 +561,32 @@ class SelectMateriaAjax(ListView):
             return JsonResponse({'message': str(e)}, status=400)
 
 
-class AsignaturasAjax(ListView):
+class SelectAsignaturaAjax(ListView, Asig):
     model = Asignatura
-
-    @method_decorator(login_required)
-    def get(self, request, *args, **kwargs):
-        asignaturas = list(Asignatura.objects.all().values())
-        return JsonResponse(asignaturas, safe=False)
-
+    form_asignatura = AsignaturaForm
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        asignaturas = list(Asignatura.objects.all().values())
-        return JsonResponse(asignaturas, safe=False)
+        try:
+            type = request.POST.get('type', None)
+            if type == 'asignar':
+                Asignatura.objects.create(
+                    profesor = EstadoProfesorHorario.objects.get(profesor=Profesor.objects.get(id=request.POST.get('id_profesor'))),
+                    materia = Materia.objects.get(materia=EstadoMateriaHorario.objects.get(id=request.POST.get('id_materia'))),
+                    horario = Horario.objects.get(id=request.POST.get('id_horario')),
+                )
+                return JsonResponse({'status': 'ok'}, status=200)
+            if type == 'reasignar':
+                asignatura = Asignatura.objects.get(id=request.POST.get('id_asignatura'))
+                asignatura.profesor = EstadoProfesorHorario.objects.get(profesor=Profesor.objects.get(id=request.POST.get('id_profesor')))
+                asignatura.save()
+                return JsonResponse({'status': 'ok'}, status=200)
+            
+            return JsonResponse({'status': 'ok'}, status=200)
 
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
+        
 class PeriodosAjax(ListView):
     model = Periodo
 

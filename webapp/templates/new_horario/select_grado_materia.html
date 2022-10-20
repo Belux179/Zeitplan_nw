@@ -4,7 +4,7 @@
   Horario Nuevo
 {% endblock %}
 {% block title_body %}
-  <h2>A&ntilde;adir Materias</h2>
+  <h2>A&ntilde;adir Materias para el Horario</h2>
 {% endblock %}
 {% block body %}
   {% load static %}
@@ -94,7 +94,10 @@ $('#button_next').click(function(){
             'id_horario': '{{id_horario}}',
         },
         success: function (data) {
-            window.location.href = "/select_asignatura/{{id_horario}}/";
+            if(data.status == 'ok'){
+                console.log(data);
+                window.location.href = "/select_asignatura/{{id_horario}}/";
+            }
         },
         error: function (data) {
             console.log('Error:', data);

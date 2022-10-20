@@ -5,6 +5,7 @@ import numpy as np
 from django.shortcuts import render, redirect, reverse
 from .models import *
 
+
 def GeneradorConteo(cont: int = 0):
     """
     Generador conteo 0, 1, 2, 
@@ -24,7 +25,7 @@ class AllHorarioView:
         if posicion == 3 and now_posicion != 3:
             return redirect('select_grado', id_horario=id_horario)
         if posicion == 4 and now_posicion != 4:
-            return redirect('select_asignatura', id_horario=id_horario)
+            return redirect('asignaturas', id_horario=id_horario)
         if posicion == 5 and now_posicion != 5:
             return redirect('select_periodo', id_horario=id_horario)
 
@@ -41,6 +42,7 @@ class GeneradorHorario:
             return recesos
         except Recesos.DoesNotExist:
             return None
+
     def periodos_generador(self, hora_inicio: str = '7:00', intervalo: str = '0:30', decanso: str = '00:00', no_periodos: int = 8, recreos: dict = None) -> list:
         """
         recreos: {no_periodo: duración del recreo}
@@ -74,7 +76,7 @@ class GeneradorHorario:
         dict: {dia: [[periodo 1, [hora de inicio, hora de fin]], [periodo 2, [hora de inicio, hora de fin]], ...]} 
 
         """
-        
+
         dias_activos = [True, True, True, True, True, False,
                         False] if dias_activos is None else dias_activos
         dias = ['Lunes', 'Martes', 'Miercoles',
@@ -136,7 +138,8 @@ class GeneradorHorario:
         horario_json = []
         for i in range(cantidad_max):
             fila = {}
-            dias_semana = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
+            dias_semana = ['Lunes', 'Martes', 'Miercoles',
+                           'Jueves', 'Viernes', 'Sabado', 'Domingo']
             for dia, it in zip(dias, iterador):
                 try:
                     periodo = next(it)
@@ -150,8 +153,8 @@ class GeneradorHorario:
             fila['id_fila'] = i+1
             horario_json.append(fila)
         return horario_json
-    
-    def change_checkbox(self, dia:str, id_horario:int):
+
+    def change_checkbox(self, dia: str, id_horario: int):
         """"
         funcion para cambiar el estado del dia seleccionado del dia del id_horario
         example: horario.Lunes (True) -> horario.Lunes (False)
@@ -176,20 +179,26 @@ class GeneradorHorario:
             return True
         except Horario.DoesNotExist:
             return False
-    
+
+
+class Asig:
+
+    def Asignatura(self, id_horario):
+        """
+        :materia: se quita todo las materias ya asignadas y solo los que tienen su EstadoMateriaHorario esta activo
+        return {asignatura: Asignatura, materia: Materia}
+
+        """
+        asignatura = Asignatura.objects.filter(horario=id_horario)
+        # excluir de materia los que ya estan asignados
+        materia = EstadoMateriaHorario.objects.filter(
+            horario=id_horario, activo=True, asignatura=None).values('materia')
+        materia = Materia.objects.filter(id__in=materia)
+        profesores = EstadoProfesorHorario.objects.filter(
+            horario=id_horario, activo=True).values('profesor')
+        profesores = Profesor.objects.filter(id__in=profesores)
+        return {'asignaciones': asignatura, 'materias': materia, 'profesores': profesores}
+
 
 if __name__ == '__main__':
-    #prueba = GeneradorHorario()
-    horario = GeneradorHorario().nw_horario_generador(dias_activos=[True, True, False, False, False, False, False],
-                                                      hora_inicio='7:00', intervalo='0:40', decanso='00:00', no_periodos=8, recreos={2: '00:10', 4: '00:10', 6: '00:10'})
-    horario = GeneradorHorario().disactive_periodo(horario, 'Martes', 2)
-    GeneradorHorario().change_hour(horario, 'Lunes', 2, '0:23', '0:30')
-    """for dia, periodos in horario.items():
-        print(dia)
-        for periodo in periodos:
-            print(periodo)
-        print('')
-    print(horario)
-    """
-    #horario=GeneradorHorario().horario_JSON(horario)
-    print(horario)
+    pass
