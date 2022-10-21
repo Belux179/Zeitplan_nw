@@ -570,17 +570,26 @@ class SelectAsignaturaAjax(ListView, Asig):
             type = request.POST.get('type', None)
             if type == 'asignar':
                 Asignatura.objects.create(
-                    profesor = EstadoProfesorHorario.objects.get(profesor=Profesor.objects.get(id=request.POST.get('id_profesor'))),
-                    materia = Materia.objects.get(materia=EstadoMateriaHorario.objects.get(id=request.POST.get('id_materia'))),
+                    profesor = EstadoProfesorHorario.objects.get(id=request.POST.get('id_profesor')),
+                    materia = EstadoMateriaHorario.objects.get(id=request.POST.get('id_materia')),
                     horario = Horario.objects.get(id=request.POST.get('id_horario')),
                 )
                 return JsonResponse({'status': 'ok'}, status=200)
             if type == 'reasignar':
                 asignatura = Asignatura.objects.get(id=request.POST.get('id_asignatura'))
-                asignatura.profesor = EstadoProfesorHorario.objects.get(profesor=Profesor.objects.get(id=request.POST.get('id_profesor')))
+                asignatura.profesor = EstadoProfesorHorario.objects.get(id=request.POST.get('id_profesor'))
                 asignatura.save()
                 return JsonResponse({'status': 'ok'}, status=200)
-            
+            if type == 'anotaciones':
+                horario = Horario.objects.get(id=request.POST.get('id_horario'))
+                horario.anotaciones_asignatura = request.POST.get('anotaciones')
+                horario.save()
+
+            if type == 'list_profesores_no_asigna':
+                profesores = self.Profesores_no_asignados(request.POST.get('id_horario'))
+                print(profesores)
+                return JsonResponse(list(profesores), status=200, safe=False)
+
             return JsonResponse({'status': 'ok'}, status=200)
 
         except Exception as e:
