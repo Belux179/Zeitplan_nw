@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.contrib.auth.models import User
 
 
-# User 
+# User
 class Pregunta(models.Model):
     activo = models.BooleanField(default=True)
     pregunta = models.CharField(max_length=100, unique=True)
@@ -117,7 +117,8 @@ class Horario(models.Model):
     duracion_periodo_minute = models.IntegerField(default=0)
 
     # anotaciones para asignatura en Textarea
-    anotaciones_asignatura =  models.TextField(blank=True, null=True, default='')
+    anotaciones_asignatura = models.TextField(
+        blank=True, null=True, default='')
 
     def __str__(self):
         return self.nombre
@@ -127,10 +128,10 @@ class Horario(models.Model):
 
     def Duracion_str(self):
         return '{}:{}'.format(self.duracion_periodo_hour, self.duracion_periodo_minute)
-    
+
     def Dias_dict(self):
         return {'Lunes': self.Lunes, 'Martes': self.Martes, 'Miercoles': self.Miercoles, 'Jueves': self.Jueves, 'Viernes': self.Viernes, 'Sabado': self.Sabado, 'Domingo': self.Domingo}
-    
+
     def Cantidad_periodos(self):
         cantidad = 0
         for dia in self.Dias_list():
@@ -138,11 +139,11 @@ class Horario(models.Model):
                 cantidad += 1
         return cantidad
 
-
     class Meta:
         verbose_name = 'Plantilla de horario'
         verbose_name_plural = 'Plantillas de horario'
         ordering = ['activo', 'nombre', ]
+
 
 class Recesos(models.Model):
     activo = models.BooleanField(default=True)
@@ -151,6 +152,7 @@ class Recesos(models.Model):
     hora_duracion = models.IntegerField(default=0)
     minuto_duracion = models.IntegerField(default=30)
     status_model = models.BooleanField(default=True)
+
     def Duracion_str(self):
         """verifica que sea 00:00"""
         if self.hora_duracion < 10:
@@ -162,6 +164,7 @@ class Recesos(models.Model):
         else:
             minuto = self.minuto_duracion
         return '{}:{}'.format(hora, minuto)
+
     class Meta:
         verbose_name = 'Receso'
         verbose_name_plural = 'Recesos'
@@ -188,7 +191,7 @@ class EstadoProfesorHorario(models.Model):
     class Meta:
         verbose_name = 'Estado de profesor en horario'
         verbose_name_plural = 'Estados de profesor en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
 
 
 class EstadoGradoHorario(models.Model):
@@ -210,7 +213,7 @@ class EstadoGradoHorario(models.Model):
     class Meta:
         verbose_name = 'Estado de grado en horario'
         verbose_name_plural = 'Estados de grado en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
 
 
 class EstadoMateriaHorario(models.Model):
@@ -224,14 +227,16 @@ class EstadoMateriaHorario(models.Model):
     Viernes = models.BooleanField(default=True)
     Sabado = models.BooleanField(default=True)
     Domingo = models.BooleanField(default=True)
-    
+
     def __str__(self):
         return self.materia.nombre
 
     class Meta:
         verbose_name = 'Estado de materia en horario'
         verbose_name_plural = 'Estados de materia en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
+
+
 class EstadoAulaHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
@@ -243,7 +248,8 @@ class EstadoAulaHorario(models.Model):
     class Meta:
         verbose_name = 'Estado de aula en horario'
         verbose_name_plural = 'Estados de aula en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
+
 
 class CondicionEstadoProfesorHorario(models.Model):
     activo = models.BooleanField(default=True)
@@ -255,10 +261,12 @@ class CondicionEstadoProfesorHorario(models.Model):
     hora_fin = models.IntegerField(default=0)
     minuto_fin = models.IntegerField(default=0)
     status_model = models.BooleanField(default=True)
+
     class Meta:
         verbose_name = 'Condicion de estado de profesor en horario'
         verbose_name_plural = 'Condiciones de estado de profesor en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
+
 
 class CondicionEstadoGradoHorario(models.Model):
     activo = models.BooleanField(default=True)
@@ -270,10 +278,12 @@ class CondicionEstadoGradoHorario(models.Model):
     hora_fin = models.IntegerField(default=0)
     minuto_fin = models.IntegerField(default=0)
     status_model = models.BooleanField(default=True)
+
     class Meta:
         verbose_name = 'Condicion de estado de grado en horario'
         verbose_name_plural = 'Condiciones de estado de grado en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
+
 
 class CondicionEstadoMateriaHorario(models.Model):
     activo = models.BooleanField(default=True)
@@ -285,32 +295,35 @@ class CondicionEstadoMateriaHorario(models.Model):
     hora_fin = models.IntegerField(default=0)
     minuto_fin = models.IntegerField(default=0)
     status_model = models.BooleanField(default=True)
+
     class Meta:
         verbose_name = 'Condicion de estado de materia en horario'
         verbose_name_plural = 'Condiciones de estado de materia en horario'
-        ordering = ['activo',]
+        ordering = ['activo', ]
+
 
 class Asignatura(models.Model):
     activo = models.BooleanField(default=True)
-    profesor = models.ForeignKey(EstadoProfesorHorario, on_delete=models.CASCADE)
+    profesor = models.ForeignKey(
+        EstadoProfesorHorario, on_delete=models.CASCADE)
     materia = models.ForeignKey(EstadoMateriaHorario, on_delete=models.CASCADE)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     status_model = models.BooleanField(default=True)
+
     class Meta:
         verbose_name = 'Asignatura'
         verbose_name_plural = 'Asignaturas'
-        ordering = ['activo',]
-
+        ordering = ['activo', ]
 
 
 class Periodo(models.Model):
     activo = models.BooleanField(default=True)
-    nombre = models.CharField(max_length= 50)
+    nombre = models.CharField(max_length=50)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
     dia = models.CharField(max_length=10, blank=False, null=False)
     hora_inicio = models.TimeField(blank=False, null=False)
     hora_fin = models.TimeField(blank=False, null=False)
-    
+
     def __str__(self):
         return self.dia + ' ' + self.hora_inicio.strftime('%H:%M') + '-' + self.hora_fin.strftime('%H:%M')
 
@@ -318,3 +331,42 @@ class Periodo(models.Model):
         verbose_name = 'Periodo'
         verbose_name_plural = 'Periodos'
         ordering = ['dia', 'hora_inicio']
+
+
+
+class VersionesHorario(models.Model):
+    activo = models.BooleanField(default=True)
+    horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
+    version = models.IntegerField(default=1)
+    fecha = models.DateTimeField(auto_now_add=True)
+    status_model = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Version de horario'
+        verbose_name_plural = 'Versiones de horario'
+        ordering = ['activo', ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        try:
+            version = VersionesHorario.objects.filter(horario=self.horario).count()
+            self.version = version + 1
+        except:
+            self.version = 1
+
+
+    
+
+
+class PeriodosHorario(models.Model):
+    activo = models.BooleanField(default=True)
+    version_horario = models.ForeignKey(VersionesHorario, on_delete=models.CASCADE)
+    asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
+    hora_inicio = models.TimeField(blank=False, null=False)
+    hora_fin = models.TimeField(blank=False, null=False)
+    status_model = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Periodo de horario'
+        verbose_name_plural = 'Periodos de horario'
+        ordering = ['activo', ]

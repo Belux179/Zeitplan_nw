@@ -14,22 +14,11 @@
 <body>
     <header>
         <div class="logo">
-            <!-- 
-            <a>Zeitplan</a>
-            <img src="{% static 'img/logo.png' %}" alt="Logo" /> <!-- -->
-            <button type="button" id="sidebarCollapse" class="btn btn-info">
-                <i class="fas fa-align-left"></i>
-                <span>MENU</span>
-            </button>
+            {% block boton_seiderbar %}
+            {% endblock %}
         </div>
-        <nav>
-            <ul class="nav__links">
-                <li><a href="#">HOME</a></li>
-                {% if user.is_authenticated %}
-                    <li> <a href="#">USUARIO: {{ user.username|upper }}</a></li>
-                {% endif %} 
-            </ul>
-        </nav>
+        {% block boton_seiderbar_iz%}
+        {% endblock %}
         <a class="cta" href="#">
             {% if user.is_authenticated %}
                 <button onclick="window.location.href='{% url 'logout' %}'">
@@ -44,85 +33,8 @@
     </header>
     <div class="wrapper">
         <!-- Sidebar  -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h3>Zeitplan</h3>
-            </div>
-            <ul class="list-unstyled components">
-                {% if estado_del_horario %}
-                
-                    {% if id_horario %}
-                    <li {% if request.path == plantilla %} class="active" {% endif %}>
-                        <a href="/plantilla/{{id_horario}}">Plantilla</a>
-                    </li>{% url "select_profesor" as select_profesor %}
-                    {% else %}
-                    <li {% if request.path|slice:"1:10" == 'plantilla' %} class="active" {% endif %}>
-                        <a href="{% url 'plantilla' %}">Plantilla</a>
-                    </li>{% url "select_profesor" as select_profesor %}
-                    {% endif %}
-                    {% if estado_del_horario > 1 %}
-                    <li {% if request.path == select_profesor %} class="active" {% endif %}>
-                        <a href="/select_profesor/{{id_horario}}">Seleccion de Profesores</a>
-                    </li>{% url "select_grado" as select_grado %}
-                    {% endif %}
-                    {% if estado_del_horario > 2 %}
-                    <li {% if request.path == select_grado %} class="active" {% endif %}>
-                        <a href="/select_grado/{{id_horario}}">Seleccion de Grados y Materias</a>
-                    </li>{% url "select_asignatura" as select_asignatura %}
-                    {% endif %}
-                    {% if estado_del_horario > 3 %}
-                    <li {% if request.path == select_asignatura %} class="active" {% endif %}>
-                        <a href="/select_asignatura/{{id_horario}}">Asignacion</a>
-                    </li>{% url "select_periodo" as select_periodo %}
-                    {% endif %}                    
-                    {% if estado_del_horario > 4 %}
-                    <li {% if request.path == select_periodo %} class="active" {% endif %}>
-                        <a href="/select_periodo/{{id_horario}}">Periodos</a>
-                    </li>
-                    {% endif %}
-                {% else %}
-                    <li>
-                        <a onclick="nwhorario()">Nuevo Horario</a>
-                    </li> {% url "home" as home %}
-                    <li {% if request.path == home %} class="active" {% endif %}>
-                        <a href="{% url 'home' %}">Horarios</a>
-                    </li>{% url "profesores" as profesores %}
-                    <li{% if request.path == profesores %} class="active" {% endif %}>
-                        <a href="{% url 'profesores' %}">Profesores</a>
-                    </li>{% url "grados" as grados %}
-                    <li {% if request.path == grados %} class="active" {% endif %}>
-                        <a href="{% url 'grados' %}">Grados</a>
-                    </li>{% url "usuario" as usuario %}
-                    <li {% if request.path == usuario %} class="active" {% endif %}>
-                        <a href="{% url 'usuario' %}">Usuario</a>
-                    </li>{% url "exportar" as exportar %}
-                    <li {% if request.path == exportar %} class="active" {% endif %}>
-                        <a href="{% url 'exportar' %}">Exportar</a>
-                    </li>
-                {% endif %}
-                {% if user.is_superuser %}
-                <!-- para ir a la ruta de admin si el usuario es superusuario -->
-                    <li>
-                        <a href="{% url 'admin:index' %}">Pagina de Administiva del sistema</a>
-                    </li>
-                {% endif %}
-            </ul>
-            <!--
-                <ul class="list-unstyled CTAs">
-                    <li>
-                        <a href="" class="download">temporal down</a>
-                    </li>
-                    <li>
-                        <a href="" class="article">temporal art</a>
-                    </li>
-                </ul>
-            -->
-        </nav>
         <!-- Page Content  -->
         <div id="content">
-            {% if estado_del_horario %}
-                <input type="hidden" name="id_plantilla" value="{{ id_plantilla }}" />
-            {% endif %}
             {% if messages %}
                 {% for message in messages %}
                     <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
@@ -130,9 +42,11 @@
                     </div>
                 {% endfor %}
             {% endif %}
+            
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="card card__content">
-                    <div class="container card-title mt-3">
+                    <!--card-title center-->
+                    <div class="container card-title mt-3 text-center">
                         {%block title_body%}
                         {%endblock title_body%}
                     </div>

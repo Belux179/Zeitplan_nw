@@ -1,0 +1,46 @@
+{% extends 'base/aplicacion_horario.html' %}
+{% load static %}
+
+{% block title %}
+    {{horario.nombre}}
+{% endblock %}
+{% block boton_seiderbar %}
+    <button type="button" class="btn btn-info mb-2 " href="{% url 'home' %}" style="background-color: #0893b5; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
+        <i class="fas fa-arrow-left"></i>
+        <span>Home</span>
+    </button>
+    <!--Botones para mostrar profesores, grados(con materias) y asignaciones-->
+    <button type="button" class="btn btn-info mb-2" href="#"  style="background-color: #07748f; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
+        <i class="fas fa-user-graduate"></i>
+        <span>Profesores</span>
+    </button>
+    <button type="button" class="btn btn-info mb-2" href="#" style="background-color: #07748f; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
+        <i class="fas fa-graduation-cap"></i>
+        <span>Grados</span>
+    </button>
+    <button type="button" class="btn btn-info mb-2" href="#"  style="background-color: #07748f; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
+        <i class="fas fa-book"></i>
+        <span>Asignaciones</span>
+    </button>
+    
+{% endblock boton_seiderbar %}
+{% block boton_seiderbar_iz %}
+<button class="mb-2" style="background-color: #F2F2F2; color: #000000; border: none;  padding: 10px 20px; font-size: 20px; font-weight: bold;">
+    <span>Generar</span>
+</button>
+
+{% endblock boton_seiderbar_iz %}
+
+{% block title_body %}
+  <h2>Horario {{horario.nombre}}</h2>
+{% endblock title_body %}
+
+{% block body %}
+
+{% endblock body %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+</script>
+{% endblock %}

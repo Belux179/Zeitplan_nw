@@ -316,3 +316,37 @@ class ExportarView(ListView):
     @method_decorator(login_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)  # """
+
+
+class HorarioDisplayView(ListView):
+    model = Horario
+    template_name = 'new_horario/horario_display.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super(HorarioDisplayView, self).dispatch(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return redirect('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context = {
+            'id_horario': self.id_horario,
+            'horario': self.horario,
+        }
+        return context
+
+    def post(self, request, *args, **kwargs):
+        pass
+        return redirect('plantilla', self.id_horario)
+    
+    def get_queryset(self):
+        try:
+            self.id_horario = self.kwargs['id_horario']
+            self.horario = Horario.objects.get(id=self.id_horario)
+            return Horario.objects.get(id=self.id_horario)
+        except Exception as e:
+            print(e)
+            return redirect('home')

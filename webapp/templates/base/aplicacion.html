@@ -62,17 +62,26 @@
                     {% endif %}
                     {% if estado_del_horario > 1 %}
                     <li {% if request.path == select_profesor %} class="active" {% endif %}>
-                        <a href="/select_profesor/{{id_horario}}">Seleccion de Profesores</a>
+                        <a href="/select_profesor/{{id_horario}}">
+                            <i class="fas fa-user-graduate"></i>
+                            Seleccion de Profesores
+                        </a>
                     </li>{% url "select_grado" as select_grado %}
                     {% endif %}
                     {% if estado_del_horario > 2 %}
                     <li {% if request.path == select_grado %} class="active" {% endif %}>
-                        <a href="/select_grado/{{id_horario}}">Seleccion de Grados y Materias</a>
+                        <a href="/select_grado/{{id_horario}}">
+                            <i class="fas fa-graduation-cap"></i>
+                            Seleccion de Grados y Materias
+                        </a>
                     </li>{% url "select_asignatura" as select_asignatura %}
                     {% endif %}
                     {% if estado_del_horario > 3 %}
                     <li {% if request.path == select_asignatura %} class="active" {% endif %}>
-                        <a href="/select_asignatura/{{id_horario}}">Asignacion</a>
+                        <a href="/select_asignatura/{{id_horario}}">
+                            <i class="fas fa-book"></i>
+                            Asignacion
+                        </a>
                     </li>{% url "select_periodo" as select_periodo %}
                     {% endif %}                    
                     {% if estado_del_horario > 4 %}
@@ -85,16 +94,28 @@
                         <a onclick="nwhorario()">Nuevo Horario</a>
                     </li> {% url "home" as home %}
                     <li {% if request.path == home %} class="active" {% endif %}>
-                        <a href="{% url 'home' %}">Horarios</a>
+                        <a href="{% url 'home' %}">
+                            <i class="fas fa-book"></i>
+                            Horarios
+                        </a>
                     </li>{% url "profesores" as profesores %}
                     <li{% if request.path == profesores %} class="active" {% endif %}>
-                        <a href="{% url 'profesores' %}">Profesores</a>
+                        <a href="{% url 'profesores' %}">
+                            <i class="fas fa-user-graduate"></i>
+                            Profesores
+                        </a>
                     </li>{% url "grados" as grados %}
                     <li {% if request.path == grados %} class="active" {% endif %}>
-                        <a href="{% url 'grados' %}">Grados</a>
+                        <a href="{% url 'grados' %}">
+                            <i class="fas fa-graduation-cap"></i>
+                        Grados
+                    </a>
                     </li>{% url "usuario" as usuario %}
                     <li {% if request.path == usuario %} class="active" {% endif %}>
-                        <a href="{% url 'usuario' %}">Usuario</a>
+                        <a href="{% url 'usuario' %}">
+                            <i class="fas fa-user"></i>
+                            Usuario
+                        </a>
                     </li>{% url "exportar" as exportar %}
                     <li {% if request.path == exportar %} class="active" {% endif %}>
                         <a href="{% url 'exportar' %}">Exportar</a>

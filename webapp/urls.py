@@ -34,10 +34,9 @@ urlpatterns += [
          SelectGradoView.as_view(), name='select_grado'),
     path('select_asignatura/<int:id_horario>/',
          Select_AsignaturasView.as_view(), name='asignaturas'),
-    #path('select_periodo/<int:id_horario>/', SelectPeriodoView.as_view(), name='select_periodo'),
-    #path('horario/<int:id_horario>/', HorarioView.as_view(), name='horario'),
-
-    #path('horario/<int:id_horario>/pdf/', HorarioPDFView.as_view(), name='horario_pdf')
+    # path('select_periodo/<int:id_horario>/', SelectPeriodoView.as_view(), name='select_periodo'),
+    path('horario/<int:id_horario>/',
+           HorarioDisplayView.as_view(), name='horario_display'),
 ]
 
 # ajax new_horario
@@ -50,5 +49,5 @@ urlpatterns += [
     path('select_materia/ajax/', SelectMateriaAjax.as_view(),
          name='select_materias_ajax'),
     path('select_asignatura/ajax/', SelectAsignaturaAjax.as_view(),
-        name='select_asignaturas_ajax'),
+         name='select_asignaturas_ajax'),
 ]
