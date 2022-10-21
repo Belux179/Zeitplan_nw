@@ -222,4 +222,5 @@ class Asig:
         return profesores_no_asignados
         
 if __name__ == '__main__':
+    
     pass
