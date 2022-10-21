@@ -192,13 +192,34 @@ class Asig:
         asignatura = Asignatura.objects.filter(horario=id_horario)
         # excluir de materia los que ya estan asignados
         materia = EstadoMateriaHorario.objects.filter(
-            horario=id_horario, activo=True, asignatura=None).values('materia')
-        materia = Materia.objects.filter(id__in=materia)
+            horario=id_horario, activo=True, asignatura=None)
         profesores = EstadoProfesorHorario.objects.filter(
-            horario=id_horario, activo=True).values('profesor')
-        profesores = Profesor.objects.filter(id__in=profesores)
-        return {'asignaciones': asignatura, 'materias': materia, 'profesores': profesores}
+            horario=id_horario, activo=True)
+        anotaciones = Horario.objects.get(id=id_horario).anotaciones_asignatura
+        return {
+            'asignaciones': asignatura, 'materias': materia, 
+            'profesores': profesores, 'anotaciones': anotaciones,
 
-
+            
+            }
+    def Profesores_no_asignados(self, id_horario):
+        """
+        :profesor: [{id_profesor: id, nombre: nombre, alias: alias, no_asignaciones: no_asignaciones}]
+        :no_asignaciones: numero de asignaciones que tiene el profesor en el horario 
+        return profesor
+        """
+        profesores = EstadoProfesorHorario.objects.filter(horario=id_horario, activo=True)
+        asignaciones = Asignatura.objects.filter(horario=id_horario)
+        profesores_no_asignados = []
+        for profesor in profesores:
+            no_asignaciones = asignaciones.filter(profesor=profesor).count()
+            profesores_no_asignados.append({
+                'id_profesor': int(profesor.profesor.id),
+                'nombre': str(profesor.profesor.nombre),
+                'alias': str(profesor.profesor.alias),
+                'no_asignaciones': int(no_asignaciones)
+            })
+        return profesores_no_asignados
+        
 if __name__ == '__main__':
     pass
