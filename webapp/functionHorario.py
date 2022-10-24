@@ -1,9 +1,16 @@
-from audioop import reverse
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
 from django.shortcuts import render, redirect, reverse
-from .models import *
+try:
+
+    from .ordenHorario import Asignacion as AsigH, HorarioClass as Hor, Horario_General as HorG
+except ImportError:
+    from ordenHorario import Asignacion as AsigH, HorarioClass as Hor, Horario_General as HorG
+try:
+    from .models import *
+except:
+    pass
 
 
 def GeneradorConteo(cont: int = 0):
@@ -28,6 +35,9 @@ class AllHorarioView:
             return redirect('asignaturas', id_horario=id_horario)
         if posicion == 5 and now_posicion != 5:
             return redirect('select_periodo', id_horario=id_horario)
+        if posicion == 10:
+            return
+            return redirect('horario', id_horario=id_horario)
 
 
 class GeneradorHorario:
@@ -197,18 +207,20 @@ class Asig:
             horario=id_horario, activo=True)
         anotaciones = Horario.objects.get(id=id_horario).anotaciones_asignatura
         return {
-            'asignaciones': asignatura, 'materias': materia, 
+            'asignaciones': asignatura, 'materias': materia,
             'profesores': profesores, 'anotaciones': anotaciones,
 
-            
-            }
+
+        }
+
     def Profesores_no_asignados(self, id_horario):
         """
         :profesor: [{id_profesor: id, nombre: nombre, alias: alias, no_asignaciones: no_asignaciones}]
         :no_asignaciones: numero de asignaciones que tiene el profesor en el horario 
         return profesor
         """
-        profesores = EstadoProfesorHorario.objects.filter(horario=id_horario, activo=True)
+        profesores = EstadoProfesorHorario.objects.filter(
+            horario=id_horario, activo=True)
         asignaciones = Asignatura.objects.filter(horario=id_horario)
         profesores_no_asignados = []
         for profesor in profesores:
@@ -220,7 +232,100 @@ class Asig:
                 'no_asignaciones': int(no_asignaciones)
             })
         return profesores_no_asignados
-        
-if __name__ == '__main__':
+
+
+class gradooo:
+    def __init__(self, horario):
+        self.horario = horario
+
+
+class OrdHorario(GeneradorHorario):
+    def __init__(self, id_horario):
+        self.id_horario = id_horario
+        self.profesores = EstadoProfesorHorario.objects.filter(
+            horario=id_horario, activo=True)
+        self.profesores_list = [
+            profesor.profesor.nombre for profesor in self.profesores]
+        self.profesores_id_list = [
+            profesor.profesor.id for profesor in self.profesores]
+        self.hor = HorG(profesores_list=self.profesores_list)
+        self.init_grados()
+        self.asignaciones()
     
+    def asignar(self):
+        self.hor.asignar()
+
+    @property
+    def id_horario(self):
+        return self.__id_horario
+
+    @id_horario.setter
+    def id_horario(self, id_horario):
+        self.__id_horario = id_horario
+        recesos = self.recesos_dict(id_horario)
+        horarioModel = Horario.objects.get(id=id_horario)
+        self.horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(),
+                                                    recreos=recesos, hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
+        self.horario = self.horario_JSON(self.horario)[0]
+        
+    def init_grados(self):
+        """
+        :hor = Hor('nombre_grado', self.horario, profesores_id_list_grado)
+        :grados = {grado:[lista de profesores del grado]}
+
+        """
+        asign = Asignatura.objects.filter(horario=self.id_horario, activo=True)
+        grados = {}
+        for asignatura in asign:
+            # si existe el grado en el diccionario
+            if asignatura.materia.materia.grado in grados:
+                # si el profesor no esta en la lista de profesores del grado
+                if asignatura.profesor.profesor.id not in grados[asignatura.materia.materia.grado.nombre]:
+                    grados[asignatura.materia.materia.grado.nombre].append(
+                        asignatura.profesor.profesor.id)
+                    continue
+            grados[asignatura.materia.materia.grado.nombre] = [
+                asignatura.profesor.profesor.id]
+        
+        for grado, profesores in grados.items():
+            self.hor.horario = Hor(grado=grado, horario=self.horario,
+                           profesor_id_list=list(profesores))
+
+    def asignaciones(self):
+        """
+        :asignaciones = AsigH('1ro', 1:id_profesor, 'Juan', 1:id_materia, 'Matematicas', 1:id_asignacion)
+        """
+        asign = Asignatura.objects.filter(horario=self.id_horario, activo=True)
+        asignaciones = []
+        for asignatura in asign:
+            asignaciones.append(AsigH(
+                grado=asignatura.materia.materia.grado.nombre, 
+                id_profesor=asignatura.profesor.profesor.id,
+                profesor=asignatura.profesor.profesor.nombre, 
+                id_materia=asignatura.materia.materia.id, 
+                materia=asignatura.materia.materia.nombre, 
+                id_asignacion=asignatura.id))
+
+        self.hor.asignaciones = asignaciones
+
+
+"""if __name__ == '__main__':
+    #prueba = GeneradorHorario()
+    horario = GeneradorHorario().nw_horario_generador(dias_activos=[True, True, False, False, False, False, False],
+                                                      hora_inicio='7:00', intervalo='0:40', decanso='00:00', no_periodos=8, recreos={2: '00:10', 4: '00:10', 6: '00:10'})
+    GeneradorHorario().change_hour(horario, 'Lunes', 2, '0:23', '0:30')
+"""
+"""
+    for dia, periodos in horario.items():
+        print(dia)
+        for periodo in periodos:
+            print(periodo)
+        print('')
+    print(horario)
+"""
+"""
+    # horario=GeneradorHorario().horario_JSON(horario)
+    print(horario)
+
     pass
+"""
