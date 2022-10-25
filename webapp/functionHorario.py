@@ -37,8 +37,7 @@ class AllHorarioView:
         if posicion == 5 and now_posicion != 5:
             return redirect('select_periodo', id_horario=id_horario)
         if posicion == 10:
-            return
-            return redirect('horario', id_horario=id_horario)
+            return redirect('horario_display', id_horario=id_horario)
 
 
 class GeneradorHorario:

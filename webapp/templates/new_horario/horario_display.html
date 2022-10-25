@@ -5,7 +5,7 @@
     {{horario.nombre}}
 {% endblock %}
 {% block boton_seiderbar %}
-    <button type="button" class="btn btn-info mb-2 " href="{% url 'home' %}" style="background-color: #0893b5; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
+    <button id='home'  class="btn btn-info mb-2 " style="background-color: #0893b5; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
         <i class="fas fa-arrow-left"></i>
         <span>Home</span>
     </button>
@@ -155,5 +155,8 @@
                 }
             }
             obtenerHorario({{id_grado}});
+            $('#home').click(function(){
+                window.location.href = "{% url 'home' %}";
+            });
     </script>
 {% endblock %}

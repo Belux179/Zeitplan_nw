@@ -35,7 +35,7 @@ urlpatterns += [
     path('select_asignatura/<int:id_horario>/',
          Select_AsignaturasView.as_view(), name='asignaturas'),
     # path('select_periodo/<int:id_horario>/', SelectPeriodoView.as_view(), name='select_periodo'),
-    path('horario/<int:id_horario>/',
+    path('horario_display/<int:id_horario>/',
            HorarioDisplayView.as_view(), name='horario_display'),
 ]
 
@@ -52,5 +52,5 @@ urlpatterns += [
          name='select_asignaturas_ajax'),
      path('display_horario/ajax/', DisplayHorarioAjax.as_view(),
            name='display_horario_ajax'),
-           
+
 ]

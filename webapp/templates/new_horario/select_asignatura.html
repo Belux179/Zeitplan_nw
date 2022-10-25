@@ -141,7 +141,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="btn-group float-right">
-            <button id="button_next" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
+            <button id="button_generate" type="button" class="btn btn-primary btn-round" data-toggle="modal" data-target="#modalProfesor">
                 Generar .<i class="fa fa-arrow-right"></i>
             </button>
         </div>
@@ -152,7 +152,26 @@
 {%block javascript%}
 <script type="text/javascript">
     $('#button_generate').click(function(){
-        
+        console.log('click');
+        $.ajax({
+        url: "/modif/{{id_horario}}/",
+        type: "POST",
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'no_page_actual': 4,
+            'id_horario': '{{id_horario}}',
+        },
+        success: function (data) {
+            if(data.status == 'ok'){
+                console.log(data);
+                window.location.href = "/horario_display/{{id_horario}}/";
+            }
+        },
+        error: function (data) {
+            console.log('Error:', data);
+        }
+    });
+
     });
     try {
         

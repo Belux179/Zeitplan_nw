@@ -14,7 +14,7 @@ from django.http import JsonResponse
 # user
 from django.contrib.auth.models import User
 from django import forms
-from .functionHorario import AllHorarioView, Asig
+from .functionHorario import AllHorarioView, Asig, OrdHorario
 
 
 # home con validacion de usuario con login_required
@@ -167,9 +167,14 @@ class Select_page_HorarioView(ListView, AllHorarioView):
             no_page_actual = request.POST.get('no_page_actual')
             horario = Horario.objects.get(id=id_horario)
             if int(horario.no_page) == int(no_page_actual):
-                print("asdasdaas--------")
-                horario.no_page = int(no_page_actual) + 1
+                if int(no_page_actual) == 4:
+                    horario.no_page = 10 
+                    hor = OrdHorario(id_horario)
+                    #hor.ordenar()
+                else:   
+                    horario.no_page = int(no_page_actual) + 1
                 horario.save()
+                
                 return JsonResponse({'status': 'ok'}, status=200)
             else:
                 return JsonResponse({'status': 'ok'}, status=200)
