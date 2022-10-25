@@ -121,7 +121,7 @@ class Horario(models.Model):
         blank=True, null=True, default='')
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} - {self.ciclo}"
 
     def Dias_list(self):
         return [self.Lunes, self.Martes, self.Miercoles, self.Jueves, self.Viernes, self.Sabado, self.Domingo]
@@ -334,7 +334,7 @@ class Periodo(models.Model):
 
 
 
-class VersionesHorario(models.Model):
+class VersionHorario(models.Model):
     activo = models.BooleanField(default=True)
     horario = models.ForeignKey(Horario, on_delete=models.CASCADE)
     version = models.IntegerField(default=1)
@@ -349,7 +349,7 @@ class VersionesHorario(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
-            version = VersionesHorario.objects.filter(horario=self.horario).count()
+            version = VersionHorario.objects.filter(horario=self.horario).count()
             self.version = version + 1
         except:
             self.version = 1
@@ -358,9 +358,11 @@ class VersionesHorario(models.Model):
     
 
 
-class PeriodosHorario(models.Model):
+class PeriodoHorario(models.Model):
     activo = models.BooleanField(default=True)
-    version_horario = models.ForeignKey(VersionesHorario, on_delete=models.CASCADE)
+    no_periodo = models.IntegerField(default=1)
+    dia = models.CharField(max_length=10, blank=False, null=False)
+    version_horario = models.ForeignKey(VersionHorario, on_delete=models.CASCADE)
     asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
     hora_inicio = models.TimeField(blank=False, null=False)
     hora_fin = models.TimeField(blank=False, null=False)
@@ -370,3 +372,5 @@ class PeriodosHorario(models.Model):
         verbose_name = 'Periodo de horario'
         verbose_name_plural = 'Periodos de horario'
         ordering = ['activo', ]
+
+    

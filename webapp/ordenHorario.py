@@ -248,7 +248,11 @@ class HorarioClass:
         """
         se usara pandas para poner el horario de forma de columna y filas
         """
-        df = pd.DataFrame(columns=self.dias_str, index=range(1, 9))
+        max = 0
+        for dia in self.dias_str:
+            if len(getattr(self, dia)) > max:
+                max = len(getattr(self, dia))
+        df = pd.DataFrame(columns=self.dias_str, index=range(1, max+1))
         for dia in self.dias_str:
             for periodo in getattr(self, dia):
                 df.loc[periodo.periodo, dia] = periodo.asignacion

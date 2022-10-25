@@ -357,24 +357,23 @@ class HorariosAjax(ListView, GeneradorHorario):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
-        if request.is_ajax():
-            try:
-                type_request = request.POST.get('type', None)
+        try:
+            type_request = request.POST.get('type', None)
 
-                if type_request == 'eliminar_horario':
-                    # solo cambia el status_model
-                    horario = Horario.objects.get(
-                        id=request.POST.get('id_horario'))
-                    horario.status_model = False
-                    horario.save()
-                    return JsonResponse({'message': 'Horario eliminado con exito'}, status=200)
-                if type_request == 'nw_plantilla':
-                    return JsonResponse(self.nw_plantilla(), safe=False)
-                horarios = list(Horario.objects.filter(
-                    status_model=True).values())
-                return JsonResponse(horarios, safe=False)
-            except Exception as e:
-                return JsonResponse({'message': str(e)}, status=400)
+            if type_request == 'eliminar_horario':
+                # solo cambia el status_model
+                horario = Horario.objects.get(
+                    id=request.POST.get('id_horario'))
+                horario.status_model = False
+                horario.save()
+                return JsonResponse({'message': 'Horario eliminado con exito'}, status=200)
+            if type_request == 'nw_plantilla':
+                return JsonResponse(self.nw_plantilla(), safe=False)
+            horarios = list(Horario.objects.filter(
+                status_model=True).values())
+            return JsonResponse(horarios, safe=False)
+        except Exception as e:
+            return JsonResponse({'message': str(e)}, status=400)
 
 
 class SelectProfesorAjax(ListView):
@@ -608,3 +607,52 @@ class PeriodosAjax(ListView):
     def post(self, request, *args, **kwargs):
         periodos = list(Periodo.objects.all().values())
         return JsonResponse(periodos, safe=False)
+
+class DisplayHorarioAjax(ListView):
+    model = Horario
+
+    @method_decorator(login_required)
+    def post(self, request, *args, **kwargs):
+        try:
+            type = request.POST.get('type', None)
+            # ultima version
+            if type == 'horarios':
+                """
+                return JsonResponse({lunes : [{proferor: "nombrefffffffffffffffffffff", materia: "nombre22222222222222222", hora_inicio: "hora", hora_fin: "hora"},{proferor: "nombre2", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}],  miercoles : [{proferor: "nombre", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}], jueves : [{proferor: "nombre", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}], viernes : [{proferor: "nombre", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}], sabado : [{proferor: "nombre", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}], domingo : [{proferor: "nombre", materia: "nombre", hora_inicio: "hora", hora_fin: "hora"}]}, status=200, safe=False)
+                segun el id_grado 
+                """
+                version = VersionHorario.objects.filter(horario=Horario.objects.get(id=request.POST.get('id_horario'))).order_by('-id')[0]
+                periodosHorario = list(PeriodoHorario.objects.filter(version_horario=version).values())
+                horarios = {}
+                for p in periodosHorario:
+                    grado_id = Asignatura.objects.get(id=p['asignatura_id']).materia.materia.grado.id
+                    if grado_id == int(request.POST.get('id_grado')):
+                        if p['dia'] not in horarios:
+                            horarios[p['dia']] = []
+                        horarios[p['dia']].append({
+                            'profesor': Asignatura.objects.get(id=p['asignatura_id']).profesor.profesor.nombre,
+                            'materia': Asignatura.objects.get(id=p['asignatura_id']).materia.materia.nombre,
+                            'hora_inicio': p['hora_inicio'],
+                            'hora_fin': p['hora_fin'],
+                        })
+                
+                grado_nombre = str(Grado.objects.get(id=request.POST.get('id_grado')).nombre)
+                # ordenar por hora
+                for dia in horarios:
+                    horarios[dia] = sorted(horarios[dia], key=lambda k: k['hora_inicio'])
+
+                # ordenar por dia
+                dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo']
+                horario_ord = {}
+                for d in dias:
+                    if d in horarios:
+                        horario_ord[d] = horarios[d]
+                horarios = horario_ord
+                return JsonResponse({'horarios':horarios, 'grado_nombre':grado_nombre}, status=200, safe=False)
+ 
+                print(periodosHorario)
+            print('------------------')
+            return JsonResponse({'message': 'Horario actualizado con exito'}, status=200)
+        except Exception as e:
+            print(e)
+            return JsonResponse({'message': str(e)}, status=400)

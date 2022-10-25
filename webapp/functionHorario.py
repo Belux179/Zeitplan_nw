@@ -3,15 +3,16 @@ import pandas as pd
 import numpy as np
 from django.shortcuts import render, redirect, reverse
 try:
+    from .forms import PeriodoHorarioForm
+    from .models import *
+except ImportError:
+    from forms import PeriodoHorarioForm
+    from models import PeriodoHorario
+try:
 
     from .ordenHorario import Asignacion as AsigH, HorarioClass as Hor, Horario_General as HorG
 except ImportError:
     from ordenHorario import Asignacion as AsigH, HorarioClass as Hor, Horario_General as HorG
-try:
-    from .models import *
-except:
-    pass
-
 
 def GeneradorConteo(cont: int = 0):
     """
@@ -253,7 +254,32 @@ class OrdHorario(GeneradorHorario):
         self.asignaciones()
     
     def asignar(self):
+        """
+        asigna los profesores a las materias en el horario 
+        luego guarda los horarios en la base de datos VersionHorario y Periodo Horario
+        """
         self.hor.asignar()
+        # crear version horario
+        version_horario = VersionHorario.objects.create(
+            horario=Horario.objects.get(id=self.id_horario))
+        # crear periodo horario
+        for hora in self.hor.horario:
+            for dia in hora.dias_str:
+                for periodo in getattr(hora, dia):
+                    """
+                    PeriodoHorario(no_periodo, dia, version_horario, hora_inicio, hora_fin, asignatura)
+                    """
+                    per = PeriodoHorario()
+                        # asignar periodo
+                    per.hora_inicio = periodo.hora_inicio
+                    per.hora_fin = periodo.hora_fin
+                    per.version_horario = version_horario
+                    per.dia = dia
+                    per.no_periodo = periodo.periodo
+                    per.asignatura = Asignatura.objects.get(
+                        id=periodo.asignacion.id_asignacion)
+                    per.save()
+        
 
     @property
     def id_horario(self):
@@ -266,7 +292,6 @@ class OrdHorario(GeneradorHorario):
         horarioModel = Horario.objects.get(id=id_horario)
         self.horario = self.nw_horario_generador(dias_activos=horarioModel.Dias_list(),
                                                     recreos=recesos, hora_inicio=horarioModel.hora_inicio.strftime('%H:%M'), intervalo=horarioModel.Duracion_str(), no_periodos=horarioModel.cantidad_periodo)
-        self.horario = self.horario_JSON(self.horario)[0]
         
     def init_grados(self):
         """

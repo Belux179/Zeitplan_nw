@@ -260,3 +260,15 @@ class AsignaturaForm(forms.ModelForm):
         super(AsignaturaForm, self).__init__(*args, **kwargs)
         self.fields['profesor'].queryset = Profesor.objects.filter(id__in=list_profesores)
         
+
+class PeriodoHorarioForm(forms.ModelForm):
+    class Meta:
+        model = PeriodoHorario
+        fields = ['hora_inicio', 'hora_fin', 'version_horario', 'asignatura']
+        widgets = {
+            'version_horario': forms.Select(attrs={'class': 'form-control'}),
+            'hora_inicio': forms.TimeInput(),
+            'hora_fin': forms.TimeInput(),
+            'asignatura': forms.Select(attrs={'class': 'form-control'}),
+        }
+        

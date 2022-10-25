@@ -335,6 +335,9 @@ class HorarioDisplayView(ListView):
         context = {
             'id_horario': self.id_horario,
             'horario': self.horario,
+            'grados': self.grados,
+            'id_grado': self.id_grado_init,
+            'nombre_grado': self.nombre_grado_init,
         }
         return context
 
@@ -346,6 +349,14 @@ class HorarioDisplayView(ListView):
         try:
             self.id_horario = self.kwargs['id_horario']
             self.horario = Horario.objects.get(id=self.id_horario)
+            asignaciones = Asignatura.objects.filter(horario=self.horario)
+            grados = []
+            for asi in asignaciones:
+                grados.append(asi.materia.materia.grado)
+            self.grados = list(set(grados))
+            self.id_grado_init = self.grados[0].id
+            self.nombre_grado_init = self.grados[0].nombre
+            print(self.grados)
             return Horario.objects.get(id=self.id_horario)
         except Exception as e:
             print(e)

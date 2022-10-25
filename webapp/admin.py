@@ -107,6 +107,9 @@ class AsignaturaAdmin(admin.ModelAdmin):
     fields = ('activo', 'profesor', 'materia', 'horario')
     list_per_page = 5
 
+    def __str__(self):
+        return f"{self.profesor} - {self.materia} - {self.horario}"
+
 
 class PeriodoAdmin(admin.ModelAdmin):
     list_display = ('activo','nombre', 'asignatura', 'dia', 'hora_inicio', 'hora_fin')
@@ -116,8 +119,23 @@ class PeriodoAdmin(admin.ModelAdmin):
     fields = ('activo','nombre', 'asignatura', 'dia', 'hora_inicio', 'hora_fin')
     list_per_page = 5
 
-    
+class VersionHorarioAdmin(admin.ModelAdmin):
+    list_display = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    list_filter = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    search_fields = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    ordering = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    fields = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    list_per_page = 5
 
+
+class PeriodoHorarioAdmin(admin.ModelAdmin):
+    list_display = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
+    list_filter = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
+    search_fields = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
+    ordering = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
+    fields = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
+    list_per_page = 20
+    
 admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(Grado, GradoAdmin)
 admin.site.register(Profesor, ProfesorAdmin)
@@ -129,4 +147,5 @@ admin.site.register(EstadoMateriaHorario, EstadoMateriaHorarioAdmin)
 admin.site.register(Asignatura, AsignaturaAdmin)
 admin.site.register(Periodo, PeriodoAdmin)
 #daf
-
+admin.site.register(VersionHorario, VersionHorarioAdmin)
+admin.site.register(PeriodoHorario, PeriodoHorarioAdmin)

@@ -9,7 +9,7 @@
         <i class="fas fa-arrow-left"></i>
         <span>Home</span>
     </button>
-    <!--Botones para mostrar profesores, grados(con materias) y asignaciones-->
+    <!--
     <button type="button" class="btn btn-info mb-2" href="#"  style="background-color: #07748f; border: none; border-radius: 30px; padding: 10px 20px; font-size: 15px; font-weight: bold;">
         <i class="fas fa-user-graduate"></i>
         <span>Profesores</span>
@@ -22,13 +22,12 @@
         <i class="fas fa-book"></i>
         <span>Asignaciones</span>
     </button>
-    
+    <!---->
 {% endblock boton_seiderbar %}
 {% block boton_seiderbar_iz %}
-<button class="mb-2" style="background-color: #F2F2F2; color: #000000; border: none;  padding: 10px 20px; font-size: 20px; font-weight: bold;">
-    <span>Generar</span>
-</button>
-
+    <button class="mb-2" style="background-color: #F2F2F2; color: #000000; border: none;  padding: 10px 20px; font-size: 20px; font-weight: bold;">
+        <span>Generar</span>
+    </button>
 {% endblock boton_seiderbar_iz %}
 
 {% block title_body %}
@@ -36,11 +35,125 @@
 {% endblock title_body %}
 
 {% block body %}
+    <!-- usar flexbox para mostrar los elementos en una sola fila -->
+    <div class="container " >
+        <!-- mostrar los grados -->
+        <div class="grados">
+            <h3>Grados</h3>
+            <!-- select y un buton para mostrar -->
+            <select name="grados" id="grados">
+                <option value="0">Seleccione un grado</option>
+                {% for grado in grados %}
+                    <option value="{{grado.id}}">{{grado.nombre}}</option>
+                {% endfor %}
+            </select>
+            <button id="btn_grado" class="btn btn-primary">
+                Mostrar
+            </button>
+        </div>
+    </div>
+    <div class="title container" id='title_hor'>
+        <h3>{{nombre_grado}}</h3> 
+    </div>
+    <div class="cont_hor text-center">
+        <div class="container">
+            <div class="contenedor-hor contai">
+    
+            </div>
+        </div>
+    </div>
 
 {% endblock body %}
 
 {% block javascript %}
-<script type="text/javascript">
+    <script type="text/javascript">
+            // Pruebas previas
+            //obtener el id del horario
+            $('#btn_grado').click(function(){
+                //obtener el id del grado
+                var id_grado = $('#grados').val();
+                obtenerHorario(id_grado);
+            });
+            var id_horario = {{horario.id}};
+            // variable que contenga los horarios
+            var horarios = {} 
+            function obtenerHorario(id_grado){
+                $.ajax({
+                    url: "{% url 'display_horario_ajax' %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        id_horario: {{id_horario}},
+                        id_grado: id_grado,
+                        type: 'horarios'
+                    },
+                    success: function(response){
+                        console.log(response);
+                        horarios = mostrar_horario(response.horarios);
+                        $('#title_hor').html('<h3>'+response.grado_nombre+'</h3>');
+                    },
+                    error: function(error){
+                        console.log(error);
+                    }
+                });
+            }
 
-</script>
+            function mostrar_horario(datos){
+                //vaciar el contenedor
+                $('.contenedor-hor').empty();
+                // recorrer datos y crear los elementos html, si no exite un dia no se crea y el primero card es el dia
+                var dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'];
+                // ordernar los datos por dia
+                var datos_ordenados = {};
+                var cont = 0;
+                for (var i = 0; i < dias.length; i++) {
+                    datos_ordenados[dias[i]] = [];
+                    for (var j = 0; j < datos.length; j++) {
+                        if(datos[j].dia == dias[i]){
+                            for (var k = 0; k < datos[j].length; k++) {
+                                datos_ordenados[dias[i]].push(datos[j][k]);
+                            }
+                        }
+                    }
+                }
+                console.log(datos_ordenados);
+                datos_ordenados = datos_ordenados;
+                for (var dia in datos) {
+                    // crear el card del dia
+                    var card = document.createElement("div");
+                    card.className = "card";
+                    // crear el card header del dia
+                    var card_header = document.createElement("div");
+                    card_header.className = "card-header";
+                    card_header.innerHTML = '<h4>'+dia+'</h4>';
+                    // crear el card body del dia
+                    var card_body = document.createElement("div");
+                    card_body.className = "card-body";
+                    // recorrer los datos del dia
+                    for (var i = 0; i < datos[dia].length; i++) {
+                        // crear el card del horario
+                        var card_horario = document.createElement("div");
+                        card_horario.className = "card m-1";
+                        // crear el card header del horario
+                        var card_horario_header = document.createElement("div");
+                        card_horario_header.className = "card-header texto_heade";
+                        card_horario_header.innerHTML = '<p>'+datos[dia][i].hora_inicio + " - " + datos[dia][i].hora_fin+'</p>';
+                        // crear el card body del horario
+                        var card_horario_body = document.createElement("div");
+                        card_horario_body.className = "card-body textos";
+                        card_horario_body.innerHTML = '<p>'+datos[dia][i].hora_inicio + " - " + datos[dia][i].hora_fin+'</p>'+'<h6>'+ datos[dia][i].materia + "<h6><p>" + datos[dia][i].proferor +'</p>';
+                        // agregar el card header y body al card del horario
+                        card_horario.appendChild(card_horario_body);
+                        // agregar el card del horario al card body del dia
+                        card_body.appendChild(card_horario);
+                    }
+                    // agregar el card header y body al card del dia
+                    card.appendChild(card_header);
+                    card.appendChild(card_body);
+                    // agregar el card del dia al contenedor
+                    $(".contenedor-hor").append(card);
+                }
+            }
+            obtenerHorario({{id_grado}});
+    </script>
 {% endblock %}

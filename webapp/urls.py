@@ -50,4 +50,7 @@ urlpatterns += [
          name='select_materias_ajax'),
     path('select_asignatura/ajax/', SelectAsignaturaAjax.as_view(),
          name='select_asignaturas_ajax'),
+     path('display_horario/ajax/', DisplayHorarioAjax.as_view(),
+           name='display_horario_ajax'),
+           
 ]
