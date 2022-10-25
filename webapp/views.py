@@ -166,11 +166,15 @@ class Select_page_HorarioView(ListView, AllHorarioView):
             id_horario = kwargs.get('id_horario')
             no_page_actual = request.POST.get('no_page_actual')
             horario = Horario.objects.get(id=id_horario)
+            if int(no_page_actual)==10:
+                hor = OrdHorario(id_horario)
+                hor.asignar()
+                return JsonResponse({'status': 'ok'}, status=200)
             if int(horario.no_page) == int(no_page_actual):
                 if int(no_page_actual) == 4:
                     horario.no_page = 10 
                     hor = OrdHorario(id_horario)
-                    #hor.ordenar()
+                    hor.asignar()
                 else:   
                     horario.no_page = int(no_page_actual) + 1
                 horario.save()
