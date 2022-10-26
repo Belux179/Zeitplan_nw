@@ -83,7 +83,11 @@
                     }
                 },
                 error: function (data) {
-                    console.log('Error:', data);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Se genero error al generar el horario, porfavor configure los datos del horario y vuelva a intentarlo',
+                    })
                 }
             });
 

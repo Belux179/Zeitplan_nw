@@ -5,7 +5,7 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/my_app_dir
+      - .:/my_app_dir 
     ports:
       - "8000:8000"
     depends_on:
@@ -18,7 +18,8 @@ services:
       MYSQL_DATABASE: zeitplan
       MYSQL_USER: admin
       MYSQL_PASSWORD: 1234
-      
+    volumes:
+      - ../mysql:/var/lib/mysql
   adminer:
     image: adminer
     restart: always

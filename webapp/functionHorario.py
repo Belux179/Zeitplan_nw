@@ -275,8 +275,14 @@ class OrdHorario(GeneradorHorario):
                     per.version_horario = version_horario
                     per.dia = dia
                     per.no_periodo = periodo.periodo
-                    per.asignatura = Asignatura.objects.get(
-                        id=periodo.asignacion.id_asignacion)
+                    if periodo.asignacion != 'Receso':
+                        asignacion_previo = periodo.asignacion.id_asignacion 
+                        per.asignatura = Asignatura.objects.get(
+                            id=periodo.asignacion.id_asignacion)
+                    else:
+                        per.asignatura = Asignatura.objects.get(
+                            id=asignacion_previo)
+                        per.type = 'Receso'
                     per.save()
         
 
@@ -332,6 +338,15 @@ class OrdHorario(GeneradorHorario):
 
         self.hor.asignaciones = asignaciones
 
+class Horario_pdf:
+    def __init__(self, id_horario):
+        self.id_horario = id_horario
+        self.version_horario = VersionHorario.objects.filter(
+            horario=id_horario).order_by('-id')[0]
+        self.periodos_horario = PeriodoHorario.objects.filter(
+            version_horario=self.version_horario.id)
+        self.horario = Horario.objects.get(id=id_horario)
+        
 
 """if __name__ == '__main__':
     #prueba = GeneradorHorario()

@@ -315,11 +315,11 @@ class Asignatura(models.Model):
         verbose_name_plural = 'Asignaturas'
         ordering = ['activo', ]
 
-
 class Periodo(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(max_length=50)
-    asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
+    type = models.CharField(max_length=50, default='Periodo')
+    asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE, null=True, blank=True)
     dia = models.CharField(max_length=10, blank=False, null=False)
     hora_inicio = models.TimeField(blank=False, null=False)
     hora_fin = models.TimeField(blank=False, null=False)
