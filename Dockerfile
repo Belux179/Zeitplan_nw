@@ -10,7 +10,7 @@ RUN pip install --upgrade setuptools
 
 RUN pip install -r requirements.txt
 
-
-ADD . /my_app_dir/.
+# agregar el directorio de la aplicación menos la carpeta de db_data
+ADD . /my_app_dir/. 
 
 WORKDIR /my_app_dir

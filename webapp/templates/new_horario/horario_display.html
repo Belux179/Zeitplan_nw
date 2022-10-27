@@ -50,15 +50,21 @@
             <button id="btn_grado" class="btn btn-primary">
                 Mostrar
             </button>
+            <button id="btn_pdf" class="btn btn-primary ">
+                PDF
+            </button>
+            
         </div>
     </div>
-    <div class="title container" id='title_hor'>
-        <h3>{{nombre_grado}}</h3> 
-    </div>
-    <div class="cont_hor text-center">
-        <div class="container">
-            <div class="contenedor-hor contai">
-    
+    <div id='container_pdf'>
+        <div class="title container" id='title_hor'>
+            <h3>{{nombre_grado}}</h3> 
+        </div>
+        <div class="cont_hor text-center">
+            <div class="container">
+                <div class="contenedor-hor contai">
+        
+                </div>
             </div>
         </div>
     </div>
@@ -67,6 +73,35 @@
 
 {% block javascript %}
     <script type="text/javascript">
+        // creacion de un PDF 
+        const $boton = document.querySelector('#btn_pdf');
+        $boton.addEventListener('click', () => {
+            const $container = document.querySelector('#container_pdf');
+            const $name = document.querySelector('#title_hor');
+            html2pdf()
+                .set({
+                    margin: 1,
+                    filename: $name.textContent + '.pdf',
+                    image: {
+                        type: 'jpeg',
+                        quality: 0.98
+                    },
+                    html2canvas: {
+                        scale: 3,
+                        letterRendering: true,
+                    },
+                    jsPDF: {
+                        unit: 'cm',
+                        format: 'A4',
+                        orientation: 'landscape'
+                    }
+                })
+                .from($container)
+                .save()
+                .catch(err => console.log(err));
+        });
+        
+        
         $('#button_generate').click(function(){
             console.log('click');
             $.ajax({
@@ -141,7 +176,7 @@
                 for (var i = 0; i < datos[dia].length; i++) {
                     // crear el card del horario
                     var card_horario = document.createElement("div");
-                    card_horario.className = "card m-1";
+                    card_horario.className = "card card-horario";
                     // crear el card header del horario
                     var card_horario_header = document.createElement("div");
                     card_horario_header.className = "card-header texto_heade";

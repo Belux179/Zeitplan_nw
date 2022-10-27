@@ -117,9 +117,10 @@
                             Usuario
                         </a>
                     </li>{% url "exportar" as exportar %}
+                    <!---
                     <li {% if request.path == exportar %} class="active" {% endif %}>
                         <a href="{% url 'exportar' %}">Exportar</a>
-                    </li>
+                    </li>-->
                 {% endif %}
                 {% if user.is_superuser %}
                 <!-- para ir a la ruta de admin si el usuario es superusuario -->

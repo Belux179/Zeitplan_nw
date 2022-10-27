@@ -67,16 +67,18 @@ class GeneradorHorario:
                    for k, v in recreos.items()} if recreos else {}
         while True:
             # enviar [hora de inicio, sum(hora de inicio + intervalo)]
+            if cont_periodo-1 in recreos:
+                yield ['Receso', hora_inicio.strftime('%H:%M'), (hora_inicio + timedelta(hours=recreos[cont_periodo-1].hour, minutes=recreos[cont_periodo-1].minute)).strftime('%H:%M')]
+                hora_inicio += timedelta(hours=recreos[cont_periodo-1].hour,
+                                         minutes=recreos[cont_periodo-1].minute)
+                cont_periodo += 1
+                continue
             yield [hora_inicio.strftime('%H:%M'), (hora_inicio + timedelta(hours=intervalo.hour, minutes=intervalo.minute)).strftime('%H:%M')]
             hora_inicio = hora_inicio + \
                 timedelta(hours=intervalo.hour, minutes=intervalo.minute) + \
                 timedelta(hours=decanso.hour, minutes=decanso.minute)
             if cont_periodo > no_periodos-1:
                 break
-            if cont_periodo in recreos:
-                yield ['Receso', hora_inicio.strftime('%H:%M'), (hora_inicio + timedelta(hours=recreos[cont_periodo].hour, minutes=recreos[cont_periodo].minute)).strftime('%H:%M')]
-                hora_inicio += timedelta(hours=recreos[cont_periodo].hour,
-                                         minutes=recreos[cont_periodo].minute)
             cont_periodo += 1
 
     def nw_horario_generador(self, dias_activos: list = None, hora_inicio: str = '7:00', intervalo: str = '0:40', decanso: str = '00:00', no_periodos: int = 8, recreos: dict = None) -> dict:
@@ -86,6 +88,7 @@ class GeneradorHorario:
         dict: {dia: [[periodo 1, [hora de inicio, hora de fin]], [periodo 2, [hora de inicio, hora de fin]], ...]} 
 
         """
+        print(recreos)
 
         dias_activos = [True, True, True, True, True, False,
                         False] if dias_activos is None else dias_activos
@@ -199,7 +202,7 @@ class Asig:
         return {asignatura: Asignatura, materia: Materia}
 
         """
-        asignatura = Asignatura.objects.filter(horario=id_horario)
+        asignatura = Asignatura.objects.filter(horario=id_horario, activo=True)
         # excluir de materia los que ya estan asignados
         materia = EstadoMateriaHorario.objects.filter(
             horario=id_horario, activo=True, asignatura=None)

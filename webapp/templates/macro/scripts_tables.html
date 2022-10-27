@@ -305,11 +305,8 @@
                 form_html = form_html || data.form;
                 Swal.fire({
                     title: 'Actualizar grados ' + data.nombre,
-                    html:   '<form id="form_add_grado" method="POST">'+
-                                '{% csrf_token %}'+
-                                '<input type="hidden" name="id" value="'+id+'">'+
-                                form_html +               
-                            '</form>', //*/
+                    html:   '<input type="hidden" name="id" value="'+id+'">'+
+                            form_html, //*/
                     showCancelButton: true,
                     confirmButtonText: 'Actualizar',
                     cancelButtonText: 'Cancelar',
@@ -399,10 +396,7 @@
         form_html = form_html || '{{ form_add_grado|escapejs }}';
         Swal.fire({
             title: 'Agregar grado',
-            html:   '<form id="form_add_grado" method="POST">'+
-                        '{% csrf_token %}'+
-                        form_html +               
-                    '</form>', //*/
+            html:   form_html, //*/
             showCancelButton: true,
             confirmButtonText: 'Agregar',
             cancelButtonText: 'Cancelar',
@@ -526,11 +520,8 @@
                 form_html = form_html || data.form;
                 Swal.fire({
                     title: 'Actualizar Materia ' + data.nombre,
-                    html:   '<form id="form_add_materia" method="POST">'+
-                                '{% csrf_token %}'+
-                                '<input type="hidden" name="id" value="'+id+'">'+
-                                form_html +               
-                            '</form>', //*/
+                    html:   '<input type="hidden" name="id" value="'+id+'">'+
+                            form_html, //*/
                     showCancelButton: true,
                     confirmButtonText: 'Actualizar',
                     cancelButtonText: 'Cancelar',
@@ -652,13 +643,17 @@
         }
         Swal.fire({
             title: 'Agregar Materia',
-            html:   '<form id="form_add_materia" method="POST">'+
-                        '{% csrf_token %}'+
-                        form_html +               
-                    '</form>', //*/
+            html:   form_html , //*/
             showCancelButton: true,
             confirmButtonText: 'Agregar',
             cancelButtonText: 'Cancelar',
+            //detectar enter
+            allowEnterKey:true,
+            allowOutsideClick:false,
+
+            //bloquear el boton de confirmar
+
+
             showLoaderOnConfirm: true,
             preConfirm: () => {
                 const nombre = Swal.getPopup().querySelector('#nombre_materia_form_materia').value
@@ -686,7 +681,7 @@
                     success: function(data) {
                         Swal.fire({
                             icon: 'success',
-                            title: 'Grado agregado',
+                            title: 'Materia agregado',
                             timer: 1500
                         });
                         $('#tabla_materias').DataTable().ajax.reload();

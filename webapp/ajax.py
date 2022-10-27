@@ -484,11 +484,22 @@ class SelectGradoAjax(ListView):
         try:
             type = request.POST.get('type', None)
             if type == 'change_status':
-                estadogrado = EstadoGradoHorario.objects.get(
-                    id=request.POST.get('id'))
-                estadogrado.activo = not estadogrado.activo
-                estadogrado.save()
-                return JsonResponse({'message': 'Grado actualizado con exito'}, status=200)
+                try:
+                    estadogrado = EstadoGradoHorario.objects.get(
+                        id=request.POST.get('id'))
+                    estadogrado.activo = not estadogrado.activo
+                    estadogrado.save()
+                    activo_grado = bool( estadogrado.activo )
+                    print("Estado grado: ", estadogrado.activo)
+                    estadomaterias = EstadoMateriaHorario.objects.filter(
+                        horario=estadogrado.horario).filter(
+                            materia__grado__id = estadogrado.grado.id)
+                    for estadomateria in estadomaterias:
+                        estadomateria.activo = activo_grado
+                        estadomateria.save()
+                    return JsonResponse({'message': 'Grado actualizado con exito'}, status=200)
+                except Exception as e:
+                    print(e)
             id_horario = request.POST.get('id_horario')
             grados_p = list(Grado.objects.filter(
                 status_model=True, activo=True).values())
@@ -534,7 +545,10 @@ class SelectMateriaAjax(ListView):
                 estadomateria.save()
                 return JsonResponse({'message': 'Materia actualizada con exito'}, status=200)
             id_horario = request.POST.get('id_horario')
-            materias = list(Materia.objects.filter(status_model=True).values())
+            # lista de id de los grados activos
+            grados = list(EstadoGradoHorario.objects.filter(activo=True, status_model=True, horario=Horario.objects.get(id=id_horario)).values_list('grado__id', flat=True))
+            print(grados)
+            materias = list(Materia.objects.filter(status_model=True, grado__id__in=grados).values())
             materias_list = []
             for m in materias:
                 try:
@@ -586,7 +600,6 @@ class SelectAsignaturaAjax(ListView, Asig):
 
             if type == 'list_profesores_no_asigna':
                 profesores = self.Profesores_no_asignados(request.POST.get('id_horario'))
-                print(profesores)
                 return JsonResponse(list(profesores), status=200, safe=False)
 
             return JsonResponse({'status': 'ok'}, status=200)
@@ -650,8 +663,7 @@ class DisplayHorarioAjax(ListView):
                 horarios = horario_ord
                 return JsonResponse({'horarios':horarios, 'grado_nombre':grado_nombre}, status=200, safe=False)
  
-                print(periodosHorario)
-            print('------------------')
+                
             return JsonResponse({'message': 'Horario actualizado con exito'}, status=200)
         except Exception as e:
             print(e)

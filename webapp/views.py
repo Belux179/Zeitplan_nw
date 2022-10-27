@@ -373,3 +373,117 @@ class HorarioDisplayView(ListView):
         except Exception as e:
             print(e)
             return redirect('home')
+
+
+# PDF 
+# import reportlab
+import os
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter, A4
+# importar TA_CENTER
+
+from reportlab.lib.enums import TA_CENTER
+
+
+
+class HorarioPDFView(TemplateView):
+    
+    def get(self, request, *args, **kwargs):
+        try:
+            id_grado = kwargs.get('id_grado')
+            id_horario = kwargs.get('id_horario')
+            grado = Grado.objects.get(id=id_grado)
+            horario = Horario.objects.get(id=id_horario)
+            # ultima version
+            version = VersionHorario.objects.filter(horario=horario).order_by('-id')[0]
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename=' + grado.nombre + '-horario.pdf'
+            buffer = BytesIO()
+            
+            c = canvas.Canvas(buffer, pagesize=A4)
+            
+            # Header
+            c.setLineWidth(.3)
+            c.setFont("Helvetica-Bold", 22)
+            c.drawString(30, 750, "Horario")
+            c.setFont("Helvetica-Bold", 16)
+            c.drawString(30, 850, grado.nombre)
+            c.setFont("Helvetica-Bold", 14)
+            dias_listta =['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado']
+            # Horario tabla de los dias [hora, lunes, martes, miercoles, jueves, viernes, sabado]
+            # Style 
+            style = getSampleStyleSheet()
+            styleBH = style["Normal"]
+            styleBH.alignment = TA_CENTER
+            styleBH.border = 0
+            styleBH.padding = 0
+            styleBH.textAlign = TA_CENTER
+            styleBH.fontSize = 12
+            styleBH.fontFamily = "Helvetica-Bold"
+            dias_activo = []
+            hora = Paragraph('''Hora''', styleBH)
+            dias =[hora]
+            if horario.Lunes:
+                lunes = Paragraph('''Lunes''', styleBH)
+                dias.append(lunes)
+                dias_activo.append('lunes')
+            if horario.Martes:
+                martes = Paragraph('''Martes''', styleBH)
+                dias.append(martes)
+                dias_activo.append('martes')
+            if horario.Miercoles:
+                miercoles = Paragraph('''Miercoles''', styleBH)
+                dias.append(miercoles)
+                dias_activo.append('miercoles')
+            if horario.Jueves:
+                jueves = Paragraph('''Jueves''', styleBH)
+                dias.append(jueves)
+                dias_activo.append('jueves')
+            if horario.Viernes:
+                viernes = Paragraph('''Viernes''', styleBH)
+                dias.append(viernes)
+                dias_activo.append('viernes')
+            if horario.Sabado:
+                sabado = Paragraph('''Sabado''', styleBH)
+                dias.append(sabado)
+                dias_activo.append('sabado')
+            if horario.Domingo:
+                domingo = Paragraph('''Domingo''', styleBH)
+                dias.append(domingo)
+                dias_activo.append('domingo')
+            data = [dias]
+
+            # styleN = style["BodyText"]
+            slyleN = style["Normal"]
+            slyleN.alignment = TA_CENTER
+            slyleN.border = 0
+            slyleN.padding = 0
+            slyleN.textAlign = TA_CENTER
+            slyleN.fontSize = 8
+            slyleN.fontFamily = "Helvetica-Bold"
+
+            width, height = A4
+            high = 650
+            # sacar las horas sin repetir
+            horas_list = PeriodoHorario.objects.filter(version_horario=version).order_by('hora_inicio').values_list('hora_inicio', 'hora_fin').distinct()
+            
+            for hora_inicio, horas_fin in horas_list:
+                fila = []
+                fila.append(Paragraph(f'{hora_inicio} - {horas_fin}', slyleN))
+                periodos = PeriodoHorario.objects.filter(version_horario=version, hora_inicio=hora_inicio, hora_fin=horas_fin)
+                # ordenar por dia
+                 
+                for dia in dias_activo:
+                    for periodo in periodos:
+                        if periodo.dia == dia:
+                            fila.append(Paragraph(f'{periodo.asignatura.materia.materia.nombre} - {periodo.asignatura.materia.profesor.nombre}', slyleN))
+                            break
+                data.append(fila)
+                high -= 20
+                tabla = Table(data, colWidths=[1.5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm])
+                self.pdf.add_table(tabla)
+        except Exception as e:
+            print(e)
+            pass

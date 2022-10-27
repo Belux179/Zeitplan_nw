@@ -52,5 +52,9 @@ urlpatterns += [
          name='select_asignaturas_ajax'),
      path('display_horario/ajax/', DisplayHorarioAjax.as_view(),
            name='display_horario_ajax'),
+]
 
+# PDF
+urlpatterns += [
+    path('horario_pdf1/<int:id_horario>/<int:id_grado>', HorarioPDFView.as_view(), name='horario'),
 ]
