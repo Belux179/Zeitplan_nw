@@ -30,28 +30,28 @@
                         <th>Asignar</th>
                     </thead>
                     <tbody style="overflow: auto;">
-                        {% for materia in materias %}
-                        <tr>
-                            <td hidden>0</td>
-                            <td>{{ materia.materia.grado }}</td>
-                            <td>{{ materia.materia.nombre }}</td>
-                            <td>
-                                <select class="form-control" id="profesor_as_{{ materia.id }}">
-                                    <option value="0">Seleccione un profesor</option>
-                                    {% for profesor in profesores %}
-                                    <option value="{{ profesor.id }}">{{ profesor.profesor.nombre }}</option>
-                                    {% endfor %}
-                                </select>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary" onclick="asignar({{ materia.id }})">
-                                    Asignar
-                                    <a id="status_as_{{materia.id}}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_">
-                                        <i class="fas fa-times"></i>
-                                    </a>
-                                </button>
-                            </td>
-                        </tr>
+                        {% for materia in materias %}                        
+                            <tr>
+                                <td hidden>0</td>
+                                <td>{{ materia.materia.grado }}</td>
+                                <td>{{ materia.materia.nombre }}</td>
+                                <td>
+                                    <select class="form-control" id="profesor_as_{{ materia.id }}">
+                                        <option value="0">Seleccione un profesor</option>
+                                        {% for profesor in profesores %}
+                                        <option value="{{ profesor.id }}">{{ profesor.profesor.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn btn-primary" onclick="asignar({{ materia.id }})">
+                                        Asignar
+                                        <a id="status_as_{{materia.id}}" type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal_">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    </button>
+                                </td>
+                            </tr>
                         {% endfor %}
                        
                         {% for asignacion in asignaciones %}

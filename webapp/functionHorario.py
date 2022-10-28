@@ -203,9 +203,7 @@ class Asig:
 
         """
         asignatura = Asignatura.objects.filter(horario=id_horario, activo=True)
-        # excluir de materia los que ya estan asignados
-        materia = EstadoMateriaHorario.objects.filter(
-            horario=id_horario, activo=True, asignatura=None)
+        materia = EstadoMateriaHorario.objects.filter( horario=id_horario, activo=True, asignatura=None)
         profesores = EstadoProfesorHorario.objects.filter(
             horario=id_horario, activo=True)
         anotaciones = Horario.objects.get(id=id_horario).anotaciones_asignatura

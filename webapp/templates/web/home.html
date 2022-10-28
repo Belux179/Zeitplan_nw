@@ -33,9 +33,6 @@
                             Estado
                         </th>
                         <th>
-                            Descripcion
-                        </th>
-                        <th>
                             Acciones
                         </th>
                     </thead>
@@ -71,19 +68,33 @@
                 columns: [
                     {data: 'id'},
                     {data: 'nombre'},
-                    {data: 'estado_del_horario'},
-                    {data: 'descripcion'},
+                    {data: 'no_page'},
                     {data: 'id'}
                 ],
-                columnDefs: [{
-                    targets: [-1],
-                    class: 'text-center',
-                    orderable: false,
-                    render: function(data, type, row) {
-                        return '<a href="modif/' + data + '/" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+
-                                '<a onclick="eliminar_horario(' + data + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                columnDefs: [
+                    {
+                        targets: [-1],
+                        class: 'text-center',
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return '<a href="modif/' + data + '/" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>'+
+                                    '<a onclick="eliminar_horario(' + data + ')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                        }
+                    },
+                    {
+                        targets: [-2],
+                        render : function(data, type, row) {
+                            if (row.no_page < 10) {
+                                //retotna un mensaje de estado de ejemplo: "En proceso de creacion"
+                                return '<span class="badge badge-warning">En proceso de creacion</span>';
+                            }
+                            if (row.no_page == 10) {
+                                //retotna un mensaje de estado de ejemplo: "Horario Crado"
+                                return '<span class="badge badge-success">Horario Creado</span>';
+                            }
+                        },
                     }
-                }]
+                ]
     
             });
         });// */

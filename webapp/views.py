@@ -374,7 +374,7 @@ class HorarioDisplayView(ListView):
             print(e)
             return redirect('home')
 
-
+"""
 # PDF 
 # import reportlab
 import os
@@ -385,7 +385,6 @@ from reportlab.lib.pagesizes import letter, A4
 # importar TA_CENTER
 
 from reportlab.lib.enums import TA_CENTER
-
 
 
 class HorarioPDFView(TemplateView):
@@ -487,3 +486,4 @@ class HorarioPDFView(TemplateView):
         except Exception as e:
             print(e)
             pass
+        """

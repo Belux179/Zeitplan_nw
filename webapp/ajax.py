@@ -561,16 +561,20 @@ class SelectMateriaAjax(ListView):
                         horario=Horario.objects.get(id=id_horario),
                         materia=Materia.objects.get(id=m['id']),
                     )
+                except:
+                    materia = None
                 finally:
-                    materias_list.append({
-                        'id': materia.id,
-                        'materia': m['nombre'],
-                        'grado': Grado.objects.get(id=m['grado_id']).nombre,
-                        'activo': materia.activo,
-                        'id_materia': m['id']
-                    })
+                    if materia:
+                        materias_list.append({
+                            'id': materia.id,
+                            'materia': m['nombre'],
+                            'grado': Grado.objects.get(id=m['grado_id']).nombre,
+                            'activo': materia.activo,
+                            'id_materia': m['id']
+                        })
             return JsonResponse(materias_list, safe=False)
         except Exception as e:
+            print('Error: ', sys.exc_info()[0])
             return JsonResponse({'message': str(e)}, status=400)
 
 

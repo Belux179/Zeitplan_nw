@@ -69,7 +69,9 @@ class Materia(models.Model):
     status_model = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.nombre
+        #consultar el nombre del grado
+
+        return str(self.nombre+ '-'+ self.grado.nombre)
 
     class Meta:
         verbose_name = 'Materia'
@@ -119,6 +121,13 @@ class Horario(models.Model):
     # anotaciones para asignatura en Textarea
     anotaciones_asignatura = models.TextField(
         blank=True, null=True, default='')
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # restar 10 horas a la hora de inicio
+        try:
+            self.hora_inicio = self.hora_inicio - timezone.timedelta(hours=10)
+        except:
+            pass
 
     def __str__(self):
         return f"{self.nombre} - {self.ciclo}"
@@ -315,6 +324,9 @@ class Asignatura(models.Model):
         verbose_name_plural = 'Asignaturas'
         ordering = ['activo', ]
 
+    def __str__(self) -> str:
+        return f'{self.profesor} _ {self.materia} _ {self.horario}'
+
 class Periodo(models.Model):
     activo = models.BooleanField(default=True)
     nombre = models.CharField(max_length=50)
@@ -354,6 +366,8 @@ class VersionHorario(models.Model):
         except:
             self.version = 1
 
+    def __str__(self):
+        return str(self.horario.nombre) + ' - ' + str(self.version)
 
     
 

@@ -55,7 +55,7 @@ class MateriaAdmin(admin.ModelAdmin):
 
 
 class HorarioAdmin(admin.ModelAdmin):
-    list_display = ('activo','nombre', 'descripcion','estado_del_horario')
+    list_display = ('activo','nombre', 'no_page')
     list_filter = ('activo','estado_del_horario',)
     search_fields = ('nombre','estado_del_horario',)
     ordering = ('nombre','status_model',)
@@ -63,7 +63,7 @@ class HorarioAdmin(admin.ModelAdmin):
         'activo','nombre', 'ciclo','estado_del_horario',
         'no_page','status_model',)
     list_per_page = 5
-
+    
 class EstadoProfesorHorarioAdmin(admin.ModelAdmin):
     list_display = ('activo', 'horario', 'profesor')
     list_filter = ('activo', 'horario', 'profesor')
@@ -124,7 +124,7 @@ class VersionHorarioAdmin(admin.ModelAdmin):
     list_filter = ('activo', 'horario', 'version', 'fecha', 'status_model')
     search_fields = ('activo', 'horario', 'version', 'fecha', 'status_model')
     ordering = ('activo', 'horario', 'version', 'fecha', 'status_model')
-    fields = ('activo', 'horario', 'version', 'fecha', 'status_model')
+    fields = ('activo', 'horario', 'version', 'status_model')
     list_per_page = 5
 
 
@@ -136,16 +136,16 @@ class PeriodoHorarioAdmin(admin.ModelAdmin):
     fields = ('activo', 'no_periodo', 'dia', 'version_horario', 'asignatura', 'hora_inicio', 'hora_fin')
     list_per_page = 20
     
-admin.site.register(Pregunta, PreguntaAdmin)
+#admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(Grado, GradoAdmin)
 admin.site.register(Profesor, ProfesorAdmin)
 admin.site.register(Materia, MateriaAdmin)
 admin.site.register(Horario, HorarioAdmin)
-admin.site.register(EstadoProfesorHorario, EstadoProfesorHorarioAdmin)
-admin.site.register(EstadoGradoHorario, EstadoGradoHorarioAdmin)
-admin.site.register(EstadoMateriaHorario, EstadoMateriaHorarioAdmin)
+#admin.site.register(EstadoProfesorHorario, EstadoProfesorHorarioAdmin)
+#admin.site.register(EstadoGradoHorario, EstadoGradoHorarioAdmin)
+#admin.site.register(EstadoMateriaHorario, EstadoMateriaHorarioAdmin)
 admin.site.register(Asignatura, AsignaturaAdmin)
-admin.site.register(Periodo, PeriodoAdmin)
+#admin.site.register(Periodo, PeriodoAdmin)
 #daf
 admin.site.register(VersionHorario, VersionHorarioAdmin)
 admin.site.register(PeriodoHorario, PeriodoHorarioAdmin)
